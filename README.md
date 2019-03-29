@@ -10,3 +10,9 @@ Solutions should contain a header that includes the problem description in the c
 You should only complete your own solution before reviewing other's solution.
 
 See Wiki for tutorials.
+
+Leetcode Flow:
+https://github.com/tewujianke/codingTom/wiki/Leetcode-Flow
+
+Git Tips:
+https://github.com/tewujianke/codingTom/wiki/Git-Tips
