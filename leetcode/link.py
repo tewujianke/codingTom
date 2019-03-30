@@ -3,6 +3,7 @@
 A script to create a soft link pointing to the most recent problem.
 Will glob all directories and find the most recent created one.
 """
+from __future__ import print_function
 import glob
 import os
 
