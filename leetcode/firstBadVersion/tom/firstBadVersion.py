@@ -18,4 +18,26 @@ Then 4 is the first bad version.
 class Solution:
 
     def firstBadVersion(self, n):
-        pass
+        firstOne = n    
+        i = n // 2
+        visited = {}
+        tmpLow = 1 
+        while True:
+            if i in visited :
+                break
+            else :
+                visited[i] = 1 
+            if not isBadVersion(i) :
+                tmpLow = i
+                i = (firstOne + i) // 2
+            else :
+                firstOne = i
+                if i > 0 :
+                    i = (i + tmpLow) // 2
+                    if i == 0 :
+                        i = 1
+                else :
+                    break
+            
+        return firstOne 
+
