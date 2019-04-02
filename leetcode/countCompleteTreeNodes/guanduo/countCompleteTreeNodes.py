@@ -46,13 +46,16 @@ class Solution(object):
             return 2**leftD-1
 
         return self.countNodes(root.left)+self.countNodes(root.right)+1 #otherwise continue going down
-        
+
+    #this function always dives to the left until bottom
     def checkLeft(self,node,depth=0):#initialize depth to 0
         if not node: return depth #if a node itself is none, don't add 1 to depth
         depth+=1 #one more valid level on the left
         if node.left == None:
             return depth
         return self.checkLeft(node.left,depth)#recursively calculate the depth
+
+    #this function always dives to the right until bottom
     def checkRight(self,node,depth=0):#initialize depth to 0
         if not node: return depth #if a node itself is none, don't add 1 to depth
         depth+=1 #one more valid level on the right
