@@ -28,7 +28,7 @@ Output: 6
 
 """
 Basic Idea:
-For current node - if depth of left equals to the depth of right, then we can safely say the number of nodes is pow(2,depth)-1
+For current node - if depth of always-left equals to the depth of always-right, then we can safely say the number of nodes is pow(2,depth)-1
 Otherwise, we need to dive into the node's left and right.
 Since the tree is guarenteed to be a complete tree, we expect many small complete trees. This algorithm can safe time for nodes in between.
 
