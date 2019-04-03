@@ -8,7 +8,7 @@ def shipWithinDays(self, weights, D):
     minWeight = max(weights)
     
     
-    def binarySearch(lo,hi) :
+    def binarySearch(lo,hi) :   ### using binary search to find the min weight.
         if lo > hi :
             return lo
         mid = (lo + hi) // 2
@@ -17,13 +17,11 @@ def shipWithinDays(self, weights, D):
         else :
             return binarySearch(mid+1,hi)
         
-    def canLoad(weight,days) :
+    def canLoad(weight,days) :    ###  check if we can ship all item within the D days
         i = 0
         
-        while days > 0 :
+        while days > 0 and i < len(weights):
             tmpWeight = weight
-            if i == len(weights) :
-                break
             while tmpWeight >= weights[i] :
                 tmpWeight = tmpWeight - weights[i] 
                 i = i + 1
