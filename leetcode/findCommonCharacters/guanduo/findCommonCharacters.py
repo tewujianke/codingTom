@@ -24,7 +24,7 @@ A[i][j] is a lowercase letter
 
 """
 The idea is to get character count for each string. Compare among all the string for each character, return the 
-minimum, which is the number of repetition for that char
+minimum, which is the number of repetition for that char. For un-common character, the minimum is zero, as the condition for not appending to the final result.
 """
 
 from collections import Counter
