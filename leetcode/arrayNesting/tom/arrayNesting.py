@@ -22,9 +22,13 @@ N is an integer within the range [1, 20,000].
 The elements of A are all distinct.
 Each element of A is an integer within the range [0, N-1].
 
-
-
 """
+
+
+
+
+
+
 
 class Solution(object):
     def arrayNesting(self, nums):
@@ -32,11 +36,11 @@ class Solution(object):
         :type nums: List[int]
         :rtype: int
         """
-        visited = [0 for n in range(len(nums))]
-        
+        visited = [0 for n in range(len(nums))]      ### we create a memo to check if we have visited the index before.
+                                                     ### if not, we can keep nesting it and incrementing tmpVal to find out maximum set
         maxVal = float('-inf')
         for n in range(len(nums)) :
-            tmp = 0
+            tmp = 0                                         
             if visited[n] == 1 :
                 continue
             else :
