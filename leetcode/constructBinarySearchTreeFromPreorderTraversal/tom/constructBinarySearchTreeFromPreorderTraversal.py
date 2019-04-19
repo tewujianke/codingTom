@@ -25,7 +25,7 @@ The values of preorder are distinct.
 """
 we use recursive method to create binary search tree.
 
-Because the array is preorder traversal
+Because the array is preorder traversal order
 
 it is 
 (
@@ -64,17 +64,17 @@ class Solution(object):
                 node.left = TreeNode(preorder[0])
                 preorder.pop(0)
                 if isRoot == 1 :
-                    recursive(node.left,0,node.val,root,0)
+                    recursive(node.left,0,node.val,root,0)   ### everytime we create a left node, we remember the maximum value
                 else : 
                     recursive(node.left,0,node.val,root,0)   
             if len(preorder) == 0 :
                     return
-            if maxVal < preorder[0] and isRoot != 1 :
-                if isRight != 1:
-                    return   
-            if preorder[0] > node.val :
+            if maxVal < preorder[0] and isRoot != 1 :    ####  this is the condition which we need to check and break to the correct subtree.
+                if isRight != 1:                         ####  we also use isRight label to track most right hand side node.
+                    return                               ####  if preorder[0] > maxVal, we dont need to check other things and directly create a right node as long as it is most right hand side path
+            if preorder[0] > node.val :                            ####   create right node, and keep passing the maxVal until we switch to left node.
                 node.right = TreeNode(preorder[0])
-                preorder.pop(0)
+                preorder.pop(0)   
                 if isRoot == 1:
                     recursive(node.right,0,node.val,root,1)
                 else :
