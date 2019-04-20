@@ -35,10 +35,25 @@ using namespace std;
 class Solution {
 public:
     vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-      deque<TreeNode*> deq;
-      if(root) deq.push_back(root);
+      deque<TreeNode*>* currentLevel = new deque<TreeNode*>;
+      deque<TreeNode*>* nextLevel = new deque<TreeNode*>;
+      vector<vector<int>> result;
 
-      while(deq.size()) {
+      if (!root) return result;
+      
+      if(root) {
+	nextLevel.push_back(root);
+      }
+      bool left2right = false;
+
+      while(currentLevel.size() || nextLevel.size()) {
+	if(!currentLevel.size() && nextLevel.size()) {
+	  auto tmp = currentLevel;
+	  currentLevel = nextLevel;
+	  nextLevel = tmp;
+	  left2right = !left2right;
+	  continue
+	}
 	
       }
     }
