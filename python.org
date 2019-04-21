@@ -1,0 +1,2391 @@
+Author: Guanduo Li
+Description: A complete Python nodes from LearningPython Edition 5
+ 
+* Some Info
+** Script typically has #! at front (usually called hash bang like what it is like in Perl)
+   - in UNIX like system, chmod +x myscript.py and include a #! in the file would make it executable scripting
+   - #!/usr/local/bin/python
+   - UNIX Python path look-up trick: can also use #!/usr/bin/env python to let the system finds the path for you
+** Some Special Reserved Words
+   - Single underscore '_' contains the last evaluated value
+     + a = 3
+       a
+       _ #gives 3 notice must explicitly call a, then call _
+
+** Python uses None as Null in C++
+* Python Object Types
+** Python programs can be decomposed into modules, which contain statement, which contain expressions, which create and process objects
+** Use dir(variable) to list all methods that could be used
+** Built-in Objects
+| Object Type        | Example/creation                             |
+|--------------------+----------------------------------------------|
+| Numbers            | 1234,3.1415,3+4j,0b111,Decimal(),Fraction()  |
+| Strings            | 'spam',"bos's",b'a\x01c',u'sp\xc4m'          |
+| Lists              | [1,[2,'three],4.5],list(range(10))           |
+| Dictionaries       | {'food':'spam','taste':'yun'},dict(hours=10) |
+| Tuples             | (1,'spam',4,'U'),tuple('spam'), namedtuple   |
+| File               | open('eggs.txt'), open(r'C:\ham.bin', 'wb'   |
+| Sets               | set('abc'),{'a','b','c'}                     |
+| Other core types   | booleans, types, None                        |
+| program unit types | functions, modules, classes                  |
+| Implementation     | compiled code,stack tracebacks               |
+     - Numbers, Strings and Tuples are immutable
+     - Lists, dictionaries and sets are not immutable
+*** Numbers
+**** use 3.1415 * 2 would give 6.28300000004 (Full precision) but print(3.1415*2) would give an user-friendly format 6.283
+     - for now if something looks odd, try to use print(.*) (str format)
+**** Python can calculate very large numbers. No type limit! Really nice    
+**** Math module is very useful. Modules are tools to utilize
+     - import math
+     - math.pi would give 3.141592....
+     - math.sqrt(85)
+**** random module performs random-number generation and selections
+     - import random
+     - random.random()
+     - random.choice([1,2,3,4]) //list coded in sqaure bracket
+**** Python also incorporates exotic numeric objections like complex, fixed-precision and rational numbers as well as set and bool
+     - Python can also use 3rd party developed data type (including matrix and vector)
+*** Strings
+S = 'Spam'
+line = 'aaa,bbb,ccccc,dd'
+line_n = 'aa,bb,cc\n'
+
+| Method     | Example                    | output                                                           |
+|------------+----------------------------+------------------------------------------------------------------|
+| find       | S.find('pa')               | 1                                                                |
+| replace    | S.replace('pa', 'XYZ')     | SXYZm      note that string is immutable, so we can't S[0] = 'p' |
+| split      | line.split(',')            | ['aaa','bbb','ccccc','dd']                                       |
+| upper      | S.upper()                  | SPAM                                                             |
+| isalpha    | S.isalpha()                | True                                                             |
+| isdigit    |                            |                                                                  |
+| rstrip     | line_n.rstrip()            | 'aa,bb,cc' (remove return char at right side)                    |
+|            | line_n.rstrip().split(',') |                                                                  |
+| ord('\n')  | 10                         | '\n' is 10 in ASCII                                              |
+| endswith   | S.endswith('b')            | ends with a charactor or string: return True or False            |
+| startswith | S.startswith('b')          | Starts with charactor 'b'? return True or False                  |
+|            |                            |                                                                  |
+
+| Formating (RHS of % is tuple)                    | Output                               |
+|--------------------------------------------------+--------------------------------------|
+| '%s,eggs, and %s' % ('spam','SPAM')              | spam,eggs, and SPAM!                 |
+| '{},eggs,and {}'.format('spam','SPAM!')          | spam,eggs,and SPAM!                  |
+| 'spam'.encode('utf8')                            | Encoded to 4 bytes in UTF-8 in files |
+| 'There are %d %s birds' % (2,'black')            | 'There are 2 black birds             |
+|--------------------------------------------------+--------------------------------------|
+| Formating with Dict                              | Output                               |
+|--------------------------------------------------+--------------------------------------|
+| '%(qty)d more %(food)s' % {'qty:1,'food':'spam'} | '1 more spam'                        |
+|--------------------------------------------------+--------------------------------------|
+**** Strings are called sequences in python --- a positionally ordered collection of other objects
+**** Double quote and single quote are interchangable
+**** Triple Quotes (block string)
+     - begin with three quotes, followed by any number of lines o text, closed with the same triple-quote seq.
+     - Single or doule quotes can be embedded in the string's text
+     - example
+       mantra = """Always look
+               ...  on the bright
+                ... side of life. """
+     - Another common usage of triple quote nowadays is to temporarily disable part of code (like commenting off)
+       X = 1
+       """
+       import os
+       print(os.getcwd())
+       """
+       Y =2 #now anything between the triple quotes are disabled if rerun
+     - Triple Quote also allows to quote # (typically # is comment in python)
+     - To sum up, triple quotes are good for multiline text in my program, so it is commonly used in documentation strings
+**** A classic example of using triple quotes with formating with dictionary (dictionaries)
+     - reply = """
+       Greetings...
+       Hello %(name)s!
+       Your age is %(age)s
+       """
+       values = {'name':'Bob','age':40}
+       print(reply % values)
+**** Formatting Method (the other flexible way to format strings besides using %)
+***** Instead of using % to format a string, we could also use string.format method (mostly same with %)
+***** By position
+      - template = '{0},{1},{2}'
+	template.format('spam','ham','egg') #return spam, ham and egg  
+***** By Keyword
+      - template = '{motto},{pork} and {food}'
+	template.format(motto='spam',pork='ham',food='eggs')
+***** By both
+      - template = '{motto},{0},{food}'
+	template.format('ham',motto='spam',food='egg') #return spam, ham, egg
+***** By relative position
+      - template = '{},{},{}'
+	template.format('spam','ham','eggs')
+***** X = '{motto},{0}'.format(42,motto=3.14) #returns 3.14,42
+***** Adding keys Attributes and Offsets
+      - import sys
+	'My {1[kind]} runs {0.platform}'.format(sys,{'kind':'laptop'}) #returns My laptop runs win32   (1 is the 2nd element)
+      - 'My {map[kind]} runs {sys.platform}'.format(sys=sys,map={'kind':laptop'})
+**** Raw Strings are used to turn off backslash converting:
+     - If we were to open a file:
+       myfile = open(r'C:\new\text.dat','w') #\n won't be converted to newline character
+**** String Operations
+     - S  = 'Spam'
+     - len(S) gives 4
+     - S[0] gives S
+     - S[1] gives p
+     - S[-1] gives m
+     - S[-2] gives a
+     - S[len(S)] gives the last character m
+     - S[1:3] gives pa //notice this one is strange. This means gives me offset from 1 to 3 but not including 3 (1:2 indeed orz)
+     - S[0:3] gives Spa
+     - S[1:] gives 'pam'
+     - S[:-1] everything but the last 
+     - S + 'xyz' string concatenation
+       + this is actually polymorphism. An operation depends on the objects being operated on
+     - S * 8 gives SpamSpamSpamSpamSpamSpamSpamSpam #this is really useful
+       print('--------------------------------------------------------------') #e.g 80 dash I needed to print
+       print('-'*80) #and it is that simple
+     - S[i:j:k] accepts a step (default to +1) k
+     - S[::2] means gets every other item from the beginning to the end (b.c first and second limits' default are 0
+     - S[::-1] means to reverse the string
+**** String Slice (slicing) and index (indexing)
+0   1   2               -2  -1
+| S | L | I | C | E | S | B | C |
+[:                              :]
+
+**** Strings are immutable. They cannot be changed after created. 
+     - we can't change one specific character by using position
+      #+BEGIN_SRC python
+      S = 'spam'
+      S[0] = 'z' //error!!!
+
+      //but instead we could do
+      S = 'z' + S[1:] //hahaha smart!
+      #+END_SRC      
+     - Every object in Python is classified as either immutable or not.
+
+**** len(s) returns size of the string       
+**** use dir(S) to list variables assigned in the caller's scope when called with no argument
+     - double undercores are implementation of the object and are available to support cutomization (operator overloading) 
+     - S + 'NI!' //this basically calls the __add__
+       'spamNI!'
+     - S.__add__('NI!')
+       'spamNI!'
+**** help(s.replace) would give the methods help message
+     - help is one of a most handful interfaces to a system of code that ships with Python known as PyDoc 
+       PyDoc is a tool that extracts doc from objects
+**** Pattern Matching
+     - import re
+	 #+BEGIN_SRC python
+	 import re
+	 match = re.match('Hello[ \t]*(.*)world', 'Hello     Python world')
+	 match.group(1) //this gives 'Python '
+	 #+END_SRC
+
+	 #+BEGIN_SRC python
+	 import re
+	 match = re.match('[/:](.*)[/:](.*)[/:](.*)', '/usr/home:lumberjack')
+	 match.groups //('usr','home','lumberjack')
+
+	 re.split('[/:]','/usr/home/lumberjack')
+	 ['','usr','home','lumberjack']
+	 #+END_SRC
+**** Use 'in' to find a match or substring:
+     - 'ab' in 'cabsf' #returns True
+**** Type cast or conversion
+     - python does not allow + different types
+       I = 1
+       G = '2'
+       G+I #error!
+     - use int or str
+       int(G) + I # force addition
+       G + str(I) # force concatenation
+     - we also have float...
+*** Lists
+**** length
+     - L = [123, 'spam', 1.23]
+       len(L) //gives 3
+**** Initialize a list with fixed number of elements
+     - [for x 
+     - [None]*8
+     - [[None]*3]*2 # [[None,None,None],[None,None,None]] #This won't work as this each entry is a shallow copy
+       - use [ [None]*x for _ in range (3)]
+**** Strings are immutable. But Lists are not. Any modifications are done in-place instead of generating a new obj
+     - S = 'abc'
+       L = list(S)
+       L #gives ['a','b','c'] and now we can change each element
+       S = ''.join(L) # or if numbers, use S = ''.join(str(e) for e in L)
+       
+**** !!! Never re-assign a mutable object to itself at the same time as changing in-place methods are called
+     - L = L.append(1) #We lost the reference of the list for L. 
+       Because append changes the list in place and it doesn't return the object itself!
+       if you assign the return value to L, then L will be pointing to None
+**** Push Back and Push Front and pop
+***** Push front
+      - L = [1,2,3,4]
+        I = 0
+        L = I + L # [0,1,2,3,4]
+      - L.insert(0,I)
+***** Push Back
+      - L.append(0) #append the data structure in the ()  #notice append is usually faster than + because it doesn't generate new obj
+      - L.extend(0) #append iterables to L (if L.extend("str"), L == ['s','t','r'] because string is iterable
+	But extend only works on iterable types (a list can be extended by a list, not a single integer)
+	If L.extend(2) error! Use append for single built-in type like integer or string
+***** Pop: returns the element (by default the last one) and delete this one from list
+      - L.pop() #by default pops the last element in the end (pop back)
+      - L.pop(0) #pops front. We could of course use any index to pop. 
+**** append would append the data structure in the end of a list, extend would extend it
+     - L = [1,2,3]
+       L.append([4,5]) #[1,2,3,[4,5]]
+     - L.extend([4,5]) #[1,2,3,4,5]
+     - extend is the same as L[len(L):] = [4,5] #see next section
+**** Replacement, Insertion and Deletion (with multiple elements)
+***** Slice replaces the entire section all at once. But use insert, pop and remove more please.... this is strange
+***** Replacement/Insertion
+      - Note: A quick way to understand this: L[1:2]: 1 and 2 are delimiters. L[1:2] covers the range, which only includes '2'
+      - L = [1,2,3]
+	L[1:2] = [4,5] #[1,4,5,3] #replace 2 by 4,5
+	#if L[1] = [4,5], then [1,[4,5],3] !!!!
+***** Insertion (replace nothing)
+      - Same as last. L[1:1] is delimiters. 1 to 1 doesn't cover any range, so no elements included in the range. Thus, insert, no replace
+      - L = [1,2,3]
+	L[1:1] = [6,7] #[1,6,7,2,3]
+***** Delete
+      - L = [1,2,3]
+	L[1:2] = [] #[1,3]
+      - del L[1:] # only [1] is left
+**** Index, slice, concat, repeat
+     - L[:-1] //slice a list returns a new list, gives [123,'spam'] notice not including -1. werid python
+     - L + [4,5,6] //concat
+     - L * 2 //repeat
+     - L = ['spam','egg']
+       L.index('spam') #returns 0 (the index)
+**** Create a list of constant (e.g. list of zeroes)
+     - [0] * 10 # 10 zeroes in a list
+**** Type-specific operations (lists are mutable)
+     L = [123,'spam',1.23]
+
+     | Operator  | Example         | output                                |
+     |-----------+-----------------+---------------------------------------|
+     | append    | L.append("NI")  | [123,'spam',1.23,'NI'] can also use + |
+     | pop (del) | L.pop(2)        | 1.23 (and it is removed from L)       |
+     | insert    | L.insert        | insert value at arbitrary potition    |
+     | remove    | L.remove("NI")  | pop a value by name                   |
+     | extend    | L.extend(1,2,3) | add multiple values at the end        |
+     | sort()    | L.sort()        |                                       |
+     | reverse   | L.reverse()     |                                       |
+**** It is not legal to index an non-existed position in a list
+     L[9999] = 1; //error: list index out of range
+**** List Iteration
+     - for x in [1,2,3]:
+          print(x,end=' ') #1 2 3  #end= defines what to print in the end of each element print
+**** list count method
+***** list.count(obj) #where obj is the object to be counted in the list
+***** aList = [1,1,2,3,4,1]
+      aList.count(1) #returns 3
+**** Lists can be nested. A list can contain lists, dictionaries and any types
+     - M = [[1,2,3],[4,5,6],[7,8,9]] //matrix 3x3
+       M[1][2] //gives 6
+**** Return a copy of the list: arr[:]
+**** List Comprehensions like map or filter built-in functions. Really powerful in constructing complex matrix
+     - col2 = [row[1] for row in M]                      //[2,5,8] collect items in column 2: or to say give me row 1 in each row in matrix M in a new list
+     - col3 = [row[1]+1 for row in M]                    //[3,6,9]
+     - col4 = [row[1] for row in M if row[1] % 2 ==0]    // [2,8] filter out odd items
+     - col5 = [M[i][i] for i in [0,1,2]]                 //[1,5,9] collect diagonal from matrix
+     - col6 = [c*2 for c in 'spam]                       // ['ss','pp','aa','mm']
+
+     - list(range(4))                                    //[0,1,2,3]
+     - list(range(-6,2,2)                                //[-6,-4,-2,0,2]
+     - [[x**2,x**3] for x in range(4)]                   //[[0,0],[1,1],[4,8],[9,27]]
+
+     - G = (sum(row) for row in M)                       //parentheses can be used to create generators that produce results on demand
+     - res = [c*4 for c in 'SPAM'] #['SSSS','PPPP','AAAA','MMMM]
+     - list(map(abs,[0,-1,-2])) # 0,1,2 basically map takes a list and pass to the first argument, and return a list of return
+*** Dictionaries (dictionary)
+| Operation                          | Interpretation                             |
+|------------------------------------+--------------------------------------------|
+| D = {}                             | empty dict                                 |
+| D = {'cto':{'name':'Bob','age':40} | Nesting                                    |
+| D = dict(zip(keylist,valuelist))   | zipping to form a dict from two lists      |
+| D.keys                             | returns all keys                           |
+| D.values                           | returns all values                         |
+| D.items()                          | all key+value tuples                       |
+| D.copy()                           | copy                                       |
+| D.clear()                          | clear                                      |
+| D.update(D2)                       | merge from another dict by keys            |
+| D.get(key,default?)                | fetch by key if absent default (or None)   |
+| D.pop(key,defualt?)                | return and remove by key if absent default |
+| D.setdefault(key,default?)         | fetch by key                               |
+| D.popitem()                        | remove and return any (key,vlaue) pair     |
+| len(D)                             | how many entries                           |
+| del D[key]                         | delete entries by key                      |
+**** Indexing a dict in Python is very fast searching operation (constant)
+     - so use dict to search instead of lists like x in [1,2,3]
+**** Any IMMUTABLE objects (even tuples) can be keys for dictionary. But not mutable objects like lists or other dict
+     - matrix = {}
+       matrix[(2,3,4)] = 88
+       X=2;Y=3;Z=4
+       matrix[(X,Y,Z)] #returns 88
+**** Created by using { } and colon :  and indexed by [ ]
+     - D = {'food':'Spam', 'qauntity':4, 'color':'pink'}
+     - D['food']  //return spam
+     - D['qauntity']+=1;
+     - D    // gives the entire dictionary
+**** It is rare to know all data in a dictionary at first. So:
+     - D= {}
+     - D['name'] = 'Bob'
+     - D['job'] = 'dev'
+     - print(D['name'])   /give 'Bob'
+**** use setdefault(key,default)
+     - if key is found, return the value of it
+     - if key is not found, insert the with this key with default
+**** Use dict and () to create dictionary AND use zip to map two lists to a dictionary (one list is key, one is value)
+     - bob1 = dict(name='bob',job='dev',age=40) // same as {'name':'bob','job':'dev','age':40}
+     - bob2 = dict(zip(['name','job','age'],['bob','dev',40]))
+     - bob3 = dict([('name','Bob'),('age',40)]) #dict key/value tuple form
+**** Python allows dictionary nesting: multiple data types can co-exist as values in the same dictionary (really cool!! Much cooler than Perl)
+     - rec = {'name':{'first':'Bob','last':'Smith'},
+              'jobs': [dev','mgr'],
+              'age':40.5}
+     - rec['jobs'][-1] //give mgr
+     - rec['jobs'].append('janitor')
+     - rec['name']['first'] //gives Bob
+**** Dictionary can't use operator + to concatenate. Use update
+**** Pop takes a key as argument and return and delete that value
+**** Delete content and reclaim memory
+     - rec = 0  //garbage collection would automatically deallocate this part of memory
+**** Although not needed, we could still initialize a dict or a list
+     - L = [] #initialize an empty list
+       L[99] = 'spam' #index out of range error!
+     
+     - L = {} #initialize an empty dict
+       L[99] = 'spma' #Works!
+**** Accessing non-exsiting key is a mistake
+     - It is usually a programming error to fetch something that isn't really there. But in many cases we need to test whether it is there
+     - The dictionary ~in~ membership expresssions allows us to query the existence of a key
+       + 'f' in D  //gives false if non-exsit
+       + if not 'f' in D:
+	    print('missing')   //missing
+	 
+       + if not 'f' in D:
+	   print('missing")
+	   print('no,really') //if we have multiple lines of code to be executed in a if, we simply need to indent them
+     - The dictionary ~get~ membership expressions 
+       + value = D.get('x',0) //try to get. if non-exsit, assign the default value (which is 0)
+       + value = D['x'] if 'x' in D else 0  //same
+     - Use try and except
+       + try:
+	     print(Matrix[(2,3,5)])
+	 except: KeyError:
+	     print(0)
+**** Sorting Keys:for loops (get all keys)
+     - D = {zip(['a','c','b'],[1,2,3])}
+     - Ks = list(D.keys()) //Ks is ['a','c','b'] #notice D.keys() return a view object not list. So use list(D.keys())
+     - Ks.sort() // ks is ['a','b','c']
+     - for key in Ks:
+       print(key,D[key])
+**** For loop introduction for the first time
+     - for c in 'spam':
+        print(c.upper()) //gives S    P    A   M
+     - x =4
+       while x>0:
+         print('spam' * x)
+         x -=1     //gives  spamspamspamspam       spamspamspam         spamspam        spam
+**** More Comprehension
+     - squares = [x**2 for x in [1,2,3,4,5]]
+     - OR
+     - squares = []
+     - for x in [1,2,3,4,5]:
+         squares.append(x **2)    //same
+     - [key for (key,value) in Mydict.items() if value == V]
+     - D = {k: v for (k,v) in zip(['a','b','c'],[1,2,3])} #{'b':2,'c':3,'a':1}
+     - D = {x:x**2 for x in [1,2,3,4]} #{1:1,2:4,3:9,4:16}
+**** In Python 3.X, D.keys, D.values and D.items are returned in view type instead of list type
+     - use list(D.keys) to override if seeing an error
+**** Map and Filter might work as twice faster as iterations.... see later
+**** use get() to try if a index exists (Python 3.X)
+     - branch = {'a':1,'b':2}
+       print(branch.get('spam','bad choice')  #bad choice because 'spam' is not a index
+*** Tuples
+**** Tuple object is a list that cannot be changed. Tuples are sequences and they are immutable like strings
+**** Tuples are used to repensent a fixed collections of items
+     - T = (1,2,3,4)   //a 4 item tuple
+     - len(T) //gives 4
+     
+     - T + (5,6) //gives 1,2,3,4,5,6
+
+     - T[0] //gives 1
+     - T.index(4) // gives 3. This is used to find the value 4's index
+       
+
+     - Can't do T[0] = 1
+**** Parenthesis is/are optional when creating tuples. Python treats un-parenthesized names (seperated by comma ',') as tuples
+     - a,b  #same as (a,b)
+**** Tuples support mixed type and nesting
+     - T = 'spam',3.0,[11,22,33] #parenthesis is optional
+     - T.append(4) //Error!! immutable
+**** Why Tuple? Immutability! It's like const in C. You pass it around and no one can change it
+**** Tuples support concatenation with +, repeat with *, slice, in, comprehension, index, count...
+**** Tuple Syntax peculiarities: Comma and parentheses: Must have the comma to represnet a tuple with single element
+     - x = (40)  # THIS IS NOT A TUPLE!!! This is just integer 40. This could be changed
+     - x = (40,) # This is tuple. Must have the comma
+**** Tuples can be converted to a list for sort, then convert back with a new tuple:
+     - T = (3,5,1,6,2)
+       L = list(T)
+       L.sort()
+       T = tuple(L)
+**** count(x) shows how many x as elements are there in the tuple or list
+     - T.count(2) #how many 2s are there in the tuple? return the count
+     
+**** Tuple can't be changed in place. But a tuple may contain mutable object as one element, which could be changed in place
+     - T = (1,[3,4],3)
+       T[1][0]=2 #this works! Because a list is mutable and could be changed
+**** (contin.) Tuple is only one-level-deep immutable
+*** Files
+**** Create a text output file
+     - f = open('data.txt','w') #'r' read-only is default if no second argument passed
+     - f.write("hello\n')
+     - f.close()
+**** Read the entire file and store into a string
+     - f = open('data.txt','r') //Hello\nworld\n
+     - text = f.read() //read the entire file into a string. NOT ONE LINE!!!!!! use readline() instead
+     - text.split() //gives ['hello','world']
+**** Read a line and a character
+     - input = open(r'C:\spam','r')
+       aString = input.readline() #read next line (including \n)
+     - aString = input.read(N) #read N characters
+     - file = open('test.txt','r')
+       while true:
+          line = file.readline()
+          if not line: break  #not line means an ampty string is read (EOF)
+          print(line.rstrip())
+**** Write
+     - output = open(r'dat.txt','w')
+       output.write(aString) #this also returns the number of character transfered from buffer to disk
+       output.writelines(alist)
+**** Change file position to offset N by using seek(N) for the next operation
+**** Close a file
+     - myfile = open(r'~/data.txt','r')
+       try:
+          for line in myfile:
+             print(line,end=' ')
+       finally:
+          myfile.close()   #this is actually optional. Python would automatically close the file when ended. But still a good habit
+**** output files are always buffered. Use close or flush
+     - by default, output files are always buffered, meaning text we write may not be transfered
+       from memory to disk
+     - use outputFile.flush() forces the buffered text to be transferred
+     - or when we close the file, the transfer is also done
+**** for line in open('data'):use line
+**** Use For loop to iterate through lines (file datatype has an iterator built-in for accessing lines of a file)
+     - the file object itself is the iterator in the file
+     - for line in open('myfile.txt'):  #this is like perl while(<>) lol
+          print(line,end=' ')
+     - f = open('s.txt')
+       f.__next__()
+**** Conversion
+     - Python relies on int(), bin(), str(), hex(), list() to read from file and convert
+     - Use rstrip() a lot to get rid of \n in the end
+       + rstrip() by default remove \n
+       + if characters are passed in, remove that character
+     - int() and other conversion function ignores \n 
+       + lin = open('d.txt',r)
+	 s = lin.readline() #returns 89\n
+	 i = int(s) #89
+**** Pickle module to store Native python objects
+***** Many times we need to store some native python objects like dict or list to a file and then read back in when needed     
+***** This could be done by using eval(), which run python command in a string
+      - line = F.readline() #[1,2,3]${'a':1,'b':2}\n}
+	parts = line.split('$')  #['[1,2,3]',"{'a':1,'b':2}\n"]
+	eval(parts[0])  #gives [1,2,3]
+	objects = [eval(P) for P in parts]  #then objects is a list of a list and a dict
+***** Above way is working. But sometimes using eval is dangerous because it would execute any command that string is giving
+***** What if the string passing in were to delete all files??      
+***** Use Pickle (for great performance and safty)
+****** Need write and read in binary files. Pickle can convert built-in type to object and reverse
+       - D = {'a':1,'b':2}
+	 F = open('database','wb')  #'wb' is needed
+	 import pickle
+	 pickle.dump(D,F)  #dumpt D to file F(database)
+	 F.close()
+
+       - F = open('database','rb') 
+	 E = pickle.load(F)  #pickle automatically convert the string to a dict, and assign to E
+***** Use shelve module (store pickled objects by key)
+****** Shelve translates an object to its pickled string and store that string under a key in a dbm file
+       - bob = Person("bob smith")
+	 sue = Person("sue jones",job='dev',pay=1000)
+	 tom = Manager("tom jones",50000)
+
+	 import shelve
+	 db = shelve.open('persondb')
+	 for obj in (bob,sue,tom):
+	    db[obj.name] = obj
+	 db.close()
+*** Sets
+**** Unordered collection of immutable objects (ONLY immutable objects can be in a set
+**** Usage
+     - X = set('spam')
+     - Y = ('h','a', 'm')
+     - X,Y //A tuple of two sets :   {'m','a','p','s'},{'m','a','h'} //unordered
+     - X & Y: {'m','a'}  intersection of the two sets
+     - X | Y //union
+     - X - Y //difference : {'p','s'}
+     - X > Y //Superset : false
+     - X < Y //subset : true
+       
+     - 'p' in set ('spam'), 'p' in 'spam', 'ham' in ['eggs','spam','ham'] //return: (true, true, true)
+       #really useful in checking things like dictionary or hash. but set is really easy to use
+
+*** "type" to tell whether the object is certain type (should never use!! Because this limits the type we can use in this program)
+    - check type
+    - what we care is what the object does not what it is. So this is not used almost
+    - type(L) // <type 'list'>
+    - type(type(L)) // <class 'type'>
+    - if type(L) == type([]):
+         print('yes')
+    - if type(L) == list:
+         print('yes')
+    - if isinstance(L,list):
+         print('yes')
+
+*** bool() can be used to tell if a list or dict is empty or not
+    - bool([]) #false
+    - bool([1]) #true
+    - bool({}) #false
+*** Common Mistakes and Gotchas
+**** Assignment creates references, not Copies!!!
+     - a = [1,2,3]
+       b = [0,a,4]  #[0,[1,2,3],4]
+       a[0] = 0
+       b  #[0,[0,2,3],4]
+     
+     - a = [1,2,3]
+       b = [0,a[:],4]
+       a[0] = 0
+       b  #[0,[1,2,3],4]  #note that [:] makes the slice limits 0. The length of the seq is sliced
+       #so basically a[:] makes a copy and return that list instead of original list
+**** Repetition adds one level deep
+     - L = [1,2]
+       X = L * 2  #[1,2,1,2]
+       Y = [L] * 2 #list context: [[1,2],[1,2]]
+**** Beware of cyclic data structures
+     - Python print [...] when it sees a cycle in object
+       + L = ['g']
+	 L.append(L)
+	 L  #['g',[...]]
+     - Rule of thumb is to avoid this....
+** Numeric Types
+*** Numeric Literals
+| Literal                       | Interpratation                 |
+|-------------------------------+--------------------------------|
+| 1234,24                       | Integers (unlimited size)      |
+| 1.23, 1.3e-10, 4E210          | Floating Point numbers         |
+| 0o117, 0x9ff,0b10101          | Octal, hex and binary          |
+| 3+4j, 3.0+4.0j,3J             | Complex                        |
+| set('spam'), {1,2,3,4}        | Sets                           |
+| Decimal('1.0'), Fraction(1,3) | Deciam and fraction extensions |
+| bool(x), True,False           | Boolean type and constants     |
+
+*** Built-in Numerical tool
+    - pow, abs, round. int ,hex, bin...
+    - random, math...
+    - int(3.1415) #truncates float to integer
+      float(3) #force to use 3.0 float type
+    - All Python operators may be overloaded
+*** Numeric Display Formats
+    - b/(2.0+a) #might give 0.8000000000004
+    - print(b/(2.0+a)) # gives rounds off digit 0.8
+    - '%e' % num # gives 3.333e-01 string fromatting expression
+    - '%4.2f' % num #0.33
+    - '{0:4.2f}'.format(num) #'0.33' string formatting method
+*** Chain Comparison
+    - Python allows chain comparator:
+      X < Y < Z #True
+      X < Y > Z #False
+      1 < 2 < 3.0 < 4 #True
+      1 == 2 < 3 #same: 1 == 2 && 2 <3
+    - Floating point number chain comparison might not work as expected
+      1.1 + 2.2 == 3.3 #True? not exactly...
+      # 3.3000000000000003
+      int (1.1+2.2) == 3.3 #this would work...
+*** Floor Division (truncating division)
+    - X / Y # classic and true division. Alwasy keep the remainder regardless of types
+    - X // Y #floor division: alwasys truncates fractional remainder
+      10 //4 #gives 2
+      10 // 4.0 # gives 2.0
+*** Math module provides floor and trunc methods (floor always counts towards a more negative number, truncate just get rid of the fraction
+    - import math
+      math.floor(2.5) #gives 2
+      math.floor(-2.5) #gives -3
+      math.trunc(2.5) # gives 2
+      math.trunc(-2.5) #gives -2
+    - math.pi, math.e provides pi and other common constant
+      math.sin(2*math.pi/180)
+    - math.sqrt(144)
+    - math.min(), math.max() #really handy min and max function. no need to self implement
+*** Hex, Octal, Binary: Literals and Conversion
+    - oct(64), hex(64, bin(64) can covert a number into corresponding type
+    - X = 99
+      bin(X),X.bit_length(),len(bin(X)) - 2 # (gives 0b1100011, 7, 7)
+*** eval function treats a string as they were Python code
+    - eval('64'), eval('0o100') # gives 64, 64
+*** import random provides random number generate
+    - import random
+      random.random()
+    - random.randint(1,10)
+    - random.choice(['life of Brain','Holy', "meaning'])
+    - suits = ['heart','clubs','diamond','spades']
+      random.shuffle(suits) #changes the order randomly of list suits
+** Dynamic Typing in Python
+*** In python, no need to declare the type of a variable b/c types are determined automatically at runtime
+*** Variable a is created when it got assigned by a value for the first time
+*** BUT!! A variable never has any type information or constraints associated with it. Type always goes with objects
+*** It is an error to reference an unassigned variable
+*** So in python all names are variables (handles in java or sv). Others are objects
+    - a = 3 # created a variable a and created an object that stands for 3 and then link them 
+*** An Object has two header fields: a type designator and a ref counter
+    - the *getrefcount* function in the standard sys module returns the object's reference count
+      import sys
+      sys.getrefcount(1) #this gives how many ref are pointing to the integer object 1 in the IDLE GUI
+*** Shared Object
+    - L1 = [1,2,3]
+      L2 = L1
+      L1[0] = 2
+      L2 # gives [2,2,3] because both L1 and L2 are pointing the same object. L1[0] changed the object itselt
+    - L1 = [1,2,3]
+      L2 = [:] #this would make a copy. And if L1[0] = [2], this won't change L2
+    - But this sliceing techniq won't work on othre mutable types (e.g dict, sets because they are not sequences)
+    - To copy a dictionary or sets, we can call X.copy() method call
+      Or a standard library module *copy* also does the job
+      + import copy # this works for dictionary and sets
+	X = copy.copy(Y)
+        Y = copy.deepcopy(Y)
+*** Check Equality
+    - L = [1,2,3]
+      M = L
+      L == M #Same value (this returns true)
+      L is M #is opeartor tells you if the two handles are pointing to the exact same object (strong, rarely used)
+ 
+    - L = [1,2,3]
+      M = [1,2,3]
+      L == M #True
+      L is M #False because the objects are differnent in spite of the same value
+      
+*** Weak Reference
+    - use weakref standard library module
+    - Weakref prevent the target object from being reclaimed.
+    - Useful when we are having caches of large object
+* Python Statement
+| Statement          | Role                  | Example                   |
+|--------------------+-----------------------+---------------------------|
+| Assignment         | create reference      | a,b = 'good','bad'        |
+| if/elif/else       | condition             |                           |
+| for/else           | iteration             |                           |
+| while/else         | loop                  |                           |
+| pass               | Empty placeholder     | while true: pass          |
+| break              | loop exit             |                           |
+| continue           | loop continue         |                           |
+| def                | functions and methods | def myFun(a,b,c=1,*d):    |
+| return             | function result       |                           |
+| yield              | Generator functions   |                           |
+| global             | Namespaces            |                           |
+| nonlocal           | Namespaces            |                           |
+| try/except/finally | catching exceptions   |                           |
+| raise              | trigger exceptions    |                           |
+| assert             | debug checks          | assert X>Y, 'X too small' |
+| with/as            | context managers      |                           |
+| del                | delete references     | del data[i:j]             |
+
+** Python allows we ignore parenthese in if x<y case (less typing is always good)
+   - but if we make the staetment multiple lines, then ( ) are required
+     + X = (A + B +
+            C + D)
+     + if (A==1 and
+           B==2 and
+           C==3):
+           print('spam'*3)
+** input (raw_input() in 2.X) built-in function takes an optional string in the argument as prompt and read from console input
+** use string.isdigit() to tell if the string contains numerical character or letter characters
+   - while True:
+        reply = raw_input('Enter text:')
+        if reply == 'stop':
+           break
+        elif not reply.isdigit():
+           print('bad'*8)
+        else:
+           print(int(reply) **2)
+     print('Bye')
+** try and except and else
+   - python runs try first, then run either except part or else part (no exception triggered)
+     + try:
+          num = int(reply)
+       except:
+          print ('Bad'*2)
+       else:
+          print(num**2)
+
+** Assignment Statement Forms
+| Operation             | Interpretation  |
+|-----------------------+-----------------|
+| spam,ham='ym','yd'    | Tuple assign    |
+| [spam,ham]='dy','dn'  | List assign     |
+| spam  = ham = 'lunch' | multiple target |
+   - When there are multiple items on the LHS of '=', the assignments are positional
+   - In Python 3.X, sequence Assignments are introduced so a,b,c = "spam" is allowed.
+     In Python 2.X, only a,b,c = "spam","s","c" is allowed
+   - Multiple Target assignment are not mutually connected:
+     + a = b= 0
+       b = 1
+       (a,b) #(0,1)
+** Print
+*** Print is built-in function in Python 3.X Print is a statement with its syntax its own in Python 2.X
+*** Print in Python 3.X
+    - print([object, ...][, sep=' '][, end='\n'][, file=sys.stdout][, flush=False])
+    - sep is what to print between each two object in the first list argument
+    - print('spam','99','eggs') #spam 99 eggs   #sep=' ' space by default
+    - print('spam','99','eggs',sep=', ') #spam, 99, eggs
+    - print('spam',file=open('data.txt','w'))  #write spam to an output file data.txt in the dir where the script is running
+*** Print in Python 2.X (note that everying in 3.X print could be converted to Python 2.X to do the same thing)
+    - print x,y  #note: print(x,y) would give a tuple (1,2)
+    - print x,y,  # same as Python 3.X print(x,y,end=' ')
+    - print x+y
+    - print >> log, x,y,z  # == print(x,y,z,file=log)
+    - print '%s...%s' % (x,y)
+*** Use print('hello world') in Python 3.X and print 'hello world' in 2.X
+*** print is basically the same as:  import sys; sys.stdout.write('hello_world\n')
+    - print(x,y) #or print x,y in 2.X
+    - is same as
+      import sys
+      sys.stout.write(str(x)+' '+str(y) + '\n)
+*** Support Python 3.X print in Python 2.X
+    - add to Top:
+      from __future__ import print_function
+*** Knowing this would allow us to redirect print to any arbitrary ways because print just called sys.stdout.write
+    - import sys
+      temp = sys.stdout  #important!! otherwise we can't restore to stdout after redirection
+      sys.stdout = open('log.txt','a')  #redirect print to a file now. It could also be a GUI window or others 
+      print('spam')  #now the print goes to the file instead of stdout
+      sys.stdout.close()
+      sys.stdout = temp  #remember to restore the print to stdout
+** Boolean
+   - All objects have an inherent boolean value
+   - Any nonzero nubmer or nonempty object is true
+   - Zero number, empty object and none are false
+** if/else/and/or
+*** if/else Ternary Expression (A=Y if x else Z)
+    - same as
+      if x:
+         A = Y
+      else:
+         A = Z
+*** and or operation  A = ((X and Y) or Z) #assign Y if Y is not empty or Z
+    - Notice X and Y returns Y if X is not empty
+    - X and Y could be any objects (they are true as long as X and Y are not empty or none)
+    - Useful when used as non-empty condition:
+      Both X and Y have elements (assuming they are lists or dict), true. Or Z has element(s)
+*** X = A or B or C or None #assing X to the first nonempty object among A and B and C
+*** X = A or Defualt #is a very common use   
+** while/for/range/zip/map
+*** while loops
+**** while/else
+     - With loop else clause, the break statement can often eliminate the need for searching status flags
+       used in other languages
+     - while test:
+          statement
+       else  #run if while didn't exit loop with break
+          statement
+     - Find if the given number is a prime number
+       x = y //2 #// is integer division (no remainder) this is to make sure y>1
+       while x > 1:
+          if y%x ==0:
+             print (y, 'has factor',x)
+             break
+          x-=1
+       else: print(y, 'is prime')
+**** break/continue/pass/loop else block
+     - break #jump out of the loop instantly
+     - continue #go to next iteration and stop current iteration
+     - pass #does nothing
+     - loop else block  #only executed if the loop was exited normally (without using break)
+*** for loops
+**** General format:  for target in object
+     - for target in object:
+          statement
+       else:  #executed if for loop didn't hit break
+          statement
+**** for loops also has else clause for not hitting break case
+**** Data types for iterating (all iterables)
+     - for x in "lumberjack":  #string
+     - for x in [1,2,3]   #list
+     - for x in (1,2,3)  #tuples
+     - for x in [[1,2],3,4,5]  #x would be a list [1,2] for the first iteration
+     - for (a,b) in [(1,2),(3,4),(5,6)]
+     - D = {'a':1,'b':2}  #notice that when using 'in' on a dict, it iterates through its keys
+       for key in D:
+          print(key,'=>',D[key])
+**** range(i,j,s=0) #returns a sequence in a list from i to j, s is space (every s items)
+     - for i in range(0,10,2):  #[0,2,4,6,8]
+     - S = 'abcdefg'
+       for c in range(0,len(S),2):
+          print(S[i],end=' ')  #gives a c e g
+**** zip and map
+***** zip: takes two or more iterables and zip them together in tuples (in python 3+, returns a zip object)
+      - zip([1,2,4],[3,4,5],[8,9,7]) #gives [(1,3,8),(2,4,9),(4,5,7)]
+***** map(callable,iterable,iterable...) #takes each item from all iterables and pass as one argument of the callable (python 3+ returns a map object)
+      - returns a list in python 2.6
+      - map(lambda x,y,z:max(x,y,z), [1,2],[3,4],[6,7])  #[6,7]
+***** One case to use map as zip:  map(None,[1,2],[3,4]) #will return [(1,3),(2,4)] (ZIP is a special case of map!)
+**** built-in method *enumerate* gives a for loop a counter "for free"
+     - enumerate function returns a generator object
+     - S = 'spam'
+       for (offset,item) in enumerate(S):
+       print(item, 'appears at offset',offset) #s appears at offset 0 ...
+     - Another Example
+       elements = ('foo','bar','baz')
+       for count,ele in enumerate(elements):
+          print count,ele #give 1,foo     2,bar     3,baz
+** Iterations and Comprehensions
+*** Built-in function iter
+     - get an iterator from an object
+       L = [1,2,3]
+       i = iter(L)
+       i.__next__()  #returns the first element
+       i.__next__() #returns the second element...
+     - Note file object is the iterator itself. So no need to find the iterator of a file
+       f = open('a.txt','r')
+       iter(f) is f #returns True
+       f.__next__() #returns the first line of the file
+*** Use iterator to iterate
+     - I = iter(L) #find the iterator of a list L （or this could be a dictionary)
+       while True:
+          try:
+             X = I.next(I)  #I.__next__() in Python 3.X
+          except StopIteration:
+             break
+          print(X ** 2 , end=' ')
+             
+*** Comprehensions: Detailed look
+***** Comprehension runs faster than just composing the list through for loops (typically 2x faster)
+***** It's very common to use comprehensions in reading files (remove \n,replace,split,upper,lower...):
+      - f = open('d.txt')
+        lines = f.readlines() #read all lines and each line is an element in list lines
+        lines = [line.rstrip() for line in lines] #running each line and remove \n character for each line
+      - lines = [line.rstrip() for line in open('d.txt')]  #alternative and more NIUBI way
+      - lines = [line.upper() for line in open('d.txt')]
+      - lines = [line.rstrip().upper() for line in open('d.txt')
+      - lines = [line.split() for line in open('d.txt')]
+      - lines = [line.replace(' ','!') for line in open('d.txt')]  #replace space with !
+      - [('sys' in line, line[:5]) for line in open('d.txt')] #returns if each element contains 'sys' for 0-4
+***** if clause can be used in comprehensions to filter out interesting items
+      - lines = [line.rstrip() for line in open('d.txt') if line[0] == 'p']
+      - [line.rstrip() for line in open('d.txt') if line.rstrip()[-1].isdigit()]
+***** Dictionary comprehensions
+      - sq = {x: x*x for x in range(10)}
+***** Nested for loops in comprehensions
+      [x+y for x in 'abc' for y in 'lmn'] #['al','am','an','bl','bm','bn','cl','cm','cn'] Notice y is the inner loop
+***** Built-in Functions: sum,any,all,max,min
+      - any(list) #return True if any one element is bool(x) True
+	+ any([1,'']) #returns True
+      - all(list) #return True if all elements are boolean True
+	+ all([1,'']) #return False
+      - max(open('d.txt')) #returns the line with max string length
+***** Built-in Function: Filter in Python 3.X
+      - returns items in an iterable for which a passed-in function returns True
+	list(filter(bool, ['spam','',1])) #returns ['spam',1] and '' got filtered out since passing it to bool gives False
+      - returns a list of numbers > 0 only:
+	l = list(range(-5,5))
+	positive = filter((lambda x:x>0),l)
+***** Built-in Function: reduce in Python 2.X but in functools module in 3.X
+      - from functools import reduce
+	reduce((lambda x,y:x+y),[1,2,3,4]) #10
+*** Multiple Versus Single Pass Iterator
+     - R = range(3)
+       next(R) #won't work because R is not an iterable. It is a list
+     - R = range(3)
+       I1 = iter(R)
+       next(I1)
+** Documentation Interlude
+*** dir function grabs a list of all attributes available inside an object (returned as a list)
+    - len(dir(sys)) #list how many attributes in sys object
+    - len([x for x in dir(sys) if not x[0] == '_'])  #how many non underscore names; use startswith or endswith for strings instead of char
+      + or:
+	len([x for x in dir(sys) if not x.startswith('__')])
+*** __doc__
+    - __doc__ function automatically finds documentation attached to the object and run for inspecting them
+    - """
+      Module doc
+      Words goes here
+      """
+      class...
+    - import file
+      print file.__doc__  #shows words above
+    - Notice we could also use "" or ' ' other than tripple quotes
+*** help: extract docstrings and accociated structural information and format them into nicely arragned report
+* Functions
+** Unlike C, def defined functions do not exist until Python reaches and runs the def
+** So It is legal to nest a def inside if statements (all functions are determines at runtime not compile time)
+   - if switch:
+        def myFunc(): return 1
+     else
+        def myFunc(): return 50
+     ... #later on
+     func() #depending on switch, my might define the function myFunc differently
+** def creates a function object and assign it to the name
+   - so we could even change the name of the function by re-assigning a name
+     def func: return1
+     othername = func
+     result = othername() #calss def func and returns 1
+*** General form:
+    - def name(arg1,arg2...):
+         statment
+         return value #returns None if value is omitted
+** ~lambda~ creates an object but returns it as a result (means: inline) (function could also be created using lambda instead of def)
+** ~yield~ sends a result object back to the caller, but remembers where it left off (These functions are generators)
+   - This remember allows it to resume its state later, so that it could produce a series of results over time
+** ~global~ declares module-level variables that are to be assigned
+   - By default all variables are local inside a function.
+   - Using global allows the function to use out-of-scope variables (Python always looks up in scopes)
+** ~nonlocal~ declares enclosing function variables that are to be assigned (Python 3.X only)
+   - allows enclosing functions to serve as a place to retain state -- information remembered between function calls
+** return could return any object in a function. So we can return any number of objects by returning a tuple
+   - def multiple(x,y):
+        x = 2
+        y = [3,4]
+        return x,y  #return as tuple
+   - a,b = multiple(1,2)
+** Scopes
+*** Basics
+   - by default, all variables declared in def are put into local scope unless specifically defined in other ways
+   - If we need to use a variable outside (top hierachy), use global
+   - If we need to assign a name that lives in an enclosing def, (Python 3.X), use nonlocal
+     + nonlocal has the same meaning as global. Except it is meant to reference nested def above instead of module's variable
+   - In-place change to objects do not classify names as locals
+     + If L is declared outside and now we are inside a def
+       L = X #this creates a new local variable L, but:
+       L.append(X) #won't creates a new local. In-place change. Automatically use the global scope if L is not found in local
+*** Rule of Thumb (LEGB rule)
+    - Name assignment creates or change local names
+    - Name reference searches in order: local, then enclosing functions(if any), global, then built-in (bottom up)
+      + X = 1
+	def func(Y):
+	  Z = X+Y  #X is a global
+      + X = 1
+	def func(Y):
+	  global X
+	  X = 992  #X is changed
+    - Built-in (Python) encloses Global (Module) encloses Enclosing Function Locals encloses Local (function)
+    - Cross File : each module (file) is a self-contained namespace
+      + #fist.py
+	X = 99
+	#second.py
+	import first  #use references a name in another file
+	print first.X
+      + When we need to change a global variable from another file, it's best practice to create a function for better maintainance       
+	#fisrt.py
+	X = 99
+	def setX(new):
+	   global X
+	   X = new
+	#second.py
+	import first.py
+	first.setX(30)
+
+** Arguments
+*** Immutable arguments are passed by value
+*** Mutable arguments are passed by pointer
+*** Avoid mutable argument changes:
+    - sometimes we pass an list as arg but we don't want to alter the original copy
+    - We can do this by copying the list:
+      L = [1,2]
+      changer_fun(1,L[:]) #this would create a copy
+    - Another way is to cast the list to a tuple, which is going to be an error if changing it:
+      L = [1,2]
+      changer_fun(1,tuple(L)) #like const in C
+*** Argument Matching Syntax: must in order of: positional, followed by keyword args, then by *name form, then **name form (**name form must be at last)
+**** func(value) - Caller: Matched by Position
+**** func(name=value) - Caller: Matched by Name
+     - def(a,b,c): print a+b+c
+     - f(c=3,b=2,a=1) #lol
+     - Could also use mixed:
+       f(1,c=3,b=2) #note order is important! must use positional, then keyword, then *name, then **name
+**** func(*iterable) - Caller: Pass all objects in iterables as individual positional arguments (tuple)
+     - The "*" star means to pack multiple separate arguments into one tuple
+       func([1,2,3],4,[5,6,7])
+       def func(*iter):
+          print (iter) #([1,2,3],4,[5,6,7])
+     - star to the left of a list also unpacks the list into multiple items when passing to function  
+       a = [1,2,3]
+       func(*a) #same as func(1,2,3)
+     - collects any numbers of uncollected arguments in a tuple
+     - def f(*eggs): print(eggs) #print all passed args
+     - Basically, Python collects all arguments as a tuple, and assign it to iterable(egg in above e.g.) 
+**** func(**dict) - Caller: Pass all key/value paires in ~dict~ as indiviadual keyword arguments (dict)
+     - works only for keyword argument
+     - def f(**args): print(args)
+       f(a=0,b=1) #{'a':1,'b':2}
+**** def func(name) - Function: Normal argument: matches any passed value by position or name
+**** def func(name=value) - Function: Default argument value!!!!
+**** def func(*name) - Function: Matches and collects remaining positional arguments in a tuple (tuple)
+**** def func(**name) - Function: Matches and collects remaining positional argumetns in a dictionary (dict)
+**** def func(*other,name) - Function: Arguments that must be passed by keyword only in calls (3.X)
+**** def func(*,name=value) - Function: Arguments that must be passed by keyword only in calls (3.X)
+**** Mix
+     - must follow the order of positional, named, *arg, **dict forms
+     - def f(a,*pargs,**kargs): print(a,pargs,kargs)
+       f(1,2,3,x=1,y=2) #1 (2,3) {'x':1,'y':2}
+     - unpacking: unpack a tuple
+       def f(a,b,c,d) : print(a,b,c,d)
+       args = (1,2)
+       args += (3,4)
+       f(*args) #this works!
+*** Be careful when dealing with default mutable objects
+**** Default values of a function is saved at the time of *def* is evaluated for mutable objects
+     - def saver(x=[]): #default is an empty list
+          x.append(1)
+     - saver() #[1]
+       saver() #[1,1]
+       saver() #[1,1,1]
+**** To avoid this:
+     - def saver(x= None):
+          if(x==None):
+             x = []
+          x.append(1)
+** Recursive
+   - def sum(L):
+        if not L: return 0
+        else: return L[0] + sum(L[1:])
+** Coding Alternatives in if/else
+   def mysun(L):
+      return 0 if not L else L[0] + mysum(L[:])
+          
+* lambda
+** lambda arg1, arg2,... argN: expression using arguments
+** lambda is an expression, not a statement
+   - with def, functions must be created elsewhere of caller.
+   - as an expression, lambda returns a value that can optionallybe assigned a name
+** lambda's body is a single expression, not a block of statements
+   - f = lambda x,y,z: x+y+z
+     f(2,3,4)
+** lambda could have default values as well
+   - x = (lambda a=1,b=2,c=3: a+b+c)
+     x(2) #7
+** handy list of inline expression
+   - L = [lambda x: x**2, lambda x: x**3]
+     for f in L:
+        print f(1)
+     print L[0](2)
+* Generators (generations and comprehensions)
+** Format of Comprehension
+   - [expression for target1 in iterable1 if condition1
+                 for target2 in iterable2 if condition2
+           ...   for targetN in iterableN if conditionN]
+** map is twice faster than for loop. Comprehension is faster than map often!
+   - because map and comprehension use C code and for loop uses PVM bytecode
+   - consider using map and comprehension in loops for performance
+** Generation (Generators/yield)
+*** Procrastination: Python supports generating results only when needed instead of all at once
+*** Unlike normal def functions, generator functions suspends when a value is returned (yield). And it resumes for the next call from the last yield call
+    - state retains (for local variables)
+*** Generator functions are closely bounded with iteration protocol (iterator objects define a __next__ method)
+    - returns next object or raise StopIteration exception to end the iteration
+*** To end the generation of values, functions either use a return with no value OR simply allow control to fall off the end
+*** To use the geneartor
+    - def gensquares(x):
+         for i in range(x):
+            yield pow(i,2)
+    - num = gensqaures(4)
+      next(num)
+      next(num) #use try except to iterate
+*** Generator Expression
+**** can use G = (c*4 for c in 'SPAM') #use parenthesis for a generator function    
+**** list(generator) #can force a generator to produce all results
+     - G = (c for c in 'PAM')
+       list(G)
+*** Notice that Generators (no matther func or expressions) are their own iterators: support just one active iteration
+*** EIBTI (Explicit is better than implicit): don't use generator in simple cases unless having a good reason
+    - One situation is: if we want a very long list of result. Compute them all might take long time and comsume memory
+    - Use generator to step through, which can reduce the memory footprint
+* Modules and Packages
+** Why Modules?
+*** Modules provide an easy way to organize components by serving as a new namespaces (avoid name collision among codes)
+*** Better code reuse
+*** Better SYstem namespace partitioning
+*** Implementing shared services or data across platforms
+** NOTE: "import" can only import modules (the file). It can't import attributes (i.e. class,function,variables...) Use from...import for attributes
+** Cross-file module linking is not resolved until *import* statements are executed at runtime!!
+   - #in a.py
+     def func(text):
+        print text
+   - #in b.py
+     import b
+     b.func("a")
+** import serves two purposes: 1.identify the filename 2. it also becomes a variable assigned to the loaded module
+** How Imports Work: 3 steps - Find, Compile and Run
+*** Find the Module's file
+**** Ideally we need to: import ./b.py  but Python disallows this by using a standard module search path and known file types to locate
+**** We sometimes still need to tell Python where to look up or to find the modules (files) (python searches from 1st to last)
+***** The Home directory of the program
+      - Python would search this dir first. So be careful not to override the same name as other modules/std lib
+***** PYTHONPATH directories (if set)
+      - We can set PYTHONPATH env variable to a customized path and start to put our source lib there
+***** Santandard Library direcotries
+***** The contents of any .pth files (if present)
+      - Python allows users to add dir to the module search path by simply listing them one per line
+      - All lines need to be in a text file whose name ends with a .pth suffix
+      - This file needs to be placed at top of Python's installation dir
+      - 
+***** The site-packages home of third-party extensions
+**** See the list of sys.path to know all dir included (can be used to verify what I added)
+**** By modifying sys.path list at run-time, we can change the search path for all future imports made in a program run
+     - many web server program often requires this
+     - a usual way: sys.path.append() or sys.path.insert
+**** Python only import the first file it encounters in the dir
+*** Compile it to byte code (if needed)
+**** Once founded, Python next compiles it bo byte coe if necessary
+**** At this time, Python firstly checks the timestamps (to see if bytecode is older than source code) (.pyc files are bytecode)
+     - if it is older, Python recompile it
+     - otherwise it skips the compilation
+     - We could ship the Python program by only shipping the .pyc bytecode without sending the source!
+**** Only imported python file will have .pyc files generated after import. *TOP LEVEL FILE* does not have a .pyc file!
+     - because the top level file is not imported by other files
+     - top level file's bytecode is generated and discarded internally
+     - So top level file is typically designed to be executed directly and not imported at all
+**** If Python doesn't have permission to create or write to .pyc file, it would just put it into memory and discard when done
+**** Python 3.2 and later: Byte code is stead stored in a subdirectory named __pycache__
+     - this helps reduce clutter in the source code directory
+**** Optimized byte code files
+***** use python -O flag for generating .pyo instead of .pyc byte code files for modules
+***** Slightly faster than normal .pyc files (but still less frequently used. PyPy system provides more substantial speedups)
+*** Run the module's code and build the objects it defines
+**** All def statements in a file will be run at import time to create functions and assign attributes, so they can be called later
+**** If the imported file has some real work (print), it will show immediately at import time. (def functions are run to create objects)
+     - so import basically will directly run the code in the imported file!!
+** *import* fetches entire module as a whole, while *from* fetches (or copies) specific names out of the module
+** double import won't rerun the module. Instead, it fetches already loaded module from the memory
+   - print ("hello")
+     spam = 1
+   - #later in top
+     import a  #"hello"
+     print a.spam # 1
+     a.spam = 2
+
+     import a # nothing on screen because a was already imported and will stay in the memory
+     print a.spam #2 not 1 because the module is not re-run and the assignment didn't play in effect!
+*** *from* copies specific name from one file over to another scope. So we can use that name directly without going through the module
+    - from module1 import pinter
+      printer("hello!") #no need to add module1.printer !!!
+    - This requires less typing
+    - But be careful! This means implicitly define some new function names in current scope
+    - It may corrupt current namespace! Using from is disallowed if in current scope, we have the same names with the target module
+    - Using import is still recommanded
+*** from module1 import *  # copy out all variables into current scope... No need to call through the module
+    - from module1 import *
+      printer() #no need to add module1.printer because *from* makes this import operation copy......
+** Use *reload(module_name)* built-in function to re-run all the code in a module
+   - long running applications (like server) can periodically update modules if something changed
+   - Note that Python can only dynamically reload modules written by Python. Not C and other languages..
+   - reload runs a module file's new code and overwrites existing namespace instead of re-creating the object
+** Changing mutables in modules (same scheme in pass argument to a function)
+   - #in a.py
+     x=1
+     y = [1,2]
+   - #in top.py
+     from a import x,y
+     x = 42 #change local copy only 
+     y[0] = 42 #changes shared mutable in place.
+** Module namespaces can be accessed via attribute __dict__ or dir(M) #suppose module is named M
+** Packages search path setting: 
+   - if I were to import a package in sub-directories of the running dir, I'd need __init__.py file in sub-directories
+   - This __init__.py file can contain python code just like normal module files. Code inside it will be run automatically the first time imported this dir
+   - import dir1.dir2.mymod
+   - Then we need the following file structure:
+     dir0\
+        dir1\
+           __init__.py
+           dir2\
+              __init__.py
+              mymod.py
+   - Once imported, the directory path becomes a handle pointing to the __init__.py object and the mod becomes the handle to the actual module
+     dir1 #<module 'dir1' from '.\\dir1\\__init__.py'
+** import modulename as name OR from modulename import function1 as myFunc
+   - same as:
+     import modulename
+     name = modulename
+     del modulename
+   - same as:
+     from modulename import function1
+     myFunc = function1
+     del function1
+* OOP
+** Python has class object and instance object
+*** Class object serves as the factory of instance objects
+*** Class Objects
+**** the *class* statement creates a class object and assign it to a name
+**** Assignments inside the class statments make class attributes (not including the nested def in a def)
+*** Instance Objects
+**** They are concrete items
+**** Calling a class object *like a function* makes a new instance object
+**** Each instance object inherits class attributes and gets its own namespace
+**** Assignments to attributes of self in methods make per-instance attributes
+**** In class method: def func(self,a)
+     - self means this method would process its instance object
+
+*** Operator Overloading
+**** Methods named with double underscores (__X__) are special hooks
+     - Python defines a fixed and unchangeable mapping from each of these operations to a specially named method
+     - such methods are called automatically
+*** __init__, __add__, __str__
+    - class myClass(firstClass):
+         def __init__(self,value):  #not to be confused with __init__.py file!!!  Also, __init__ is overator overloading as well
+            self.data = value
+         def __add__(self,other):
+            return myClass(self.data+other)
+         def __str__(self):
+            return '[ThirdClass:%s]' % self.data
+         def mul(self,other):  #this mul didn't overload the operator *
+            self.data *=other
+*** Attributes doesn't have to be defined in the class to be used in an object! (quite different from other languages)
+    - Instances have no attributes of their own at first. They simply fetch the attribute from the class object where it is stored
+    - We can always assign unique attributes to an instance object
+    - class rec:
+         pass
+    - a = rec()
+      a.name = 'bob'
+      print a.name #'bob' ! We can always attach attributes to an instance object even these attributes are not defined in the class
+    - So in some sense, class would create an empty namespace, which could even be used as a dictionary
+*** __dict__ is an built-in dictionary in an instance or class object that shows the namespace (attributes from the class not here!)
+*** __class__ is an attribute link to the instance's class object
+** Inheritance
+*** class A:
+       def __init__(self,name,val=0):
+          self.name = name
+	  self.val = val
+       def raise(val):
+          self.val += val
+*** class B(A):
+       def __init__(self,name,val):
+          A.__init__(self,name,val)
+       def raise(self,val,bonus):
+          A.raise(self,val) #must remember to pass along the object self!
+	  self.val+=bonus
+*** Multiple Inheritance might casue variable name conflict
+**** conflict example
+     - class A:
+          def math(self,value):
+             self.X = value
+       class B:
+          def math1(self,value):
+             self.X = value
+       class C(A,B) #only one X can be valid!!
+**** Pseudoprivate Attributes: Use two underscore prefix but no end with two underscores ( useful in large project. Use cautious when MI)
+     - Use two underscores prefix will automatically convert the name to _classname__name
+     - class C1:
+          def meth1(self, value):
+             self.__X = 88
+     - I = C1()
+       I.meth1(88)
+       print(I.__dict__) #_C1__X  one underscore prefixed automatically
+     - class Tool:
+          def __method(self): #becomes _Tool__method
+             pass
+**** When Python searches methods, it chooses the first one it encounters (lowest and leftmost in classic classes) in conflict case
+**** We may also select an attribute explicitly by referencing it through its class name
+     - superclass.method(self) # this would break the conflict and overrides the search's defualt
+** Department Example
+   - class Person
+   - class Manager(Person):
+   - class Department:
+        def __init__(self,*args):
+           self.members = list(args)
+        def addMember(self,person):
+           self.members.append(person)
+        def showAll(self):
+           for person in self.members:
+              print(person)
+** Classes have a __name__, just like modules, and a __bases__ sequence that provides access to superclasses
+** object.__dict__ attribute provides a dictionary with one key/value pair for every attribute attached to a namespace object (indluding class,obj,mod)
+** Operator Overloading
+*** Common Operator Overloading Methods
+| Method                      | Implements                       | Called for                                                                                            |
+|-----------------------------+----------------------------------+-------------------------------------------------------------------------------------------------------|
+| __init__                    | Constructor                      | X = class(args)                                                                                       |
+| __del__                     | Destructor                       | Object reclamation of X                                                                               |
+| __add__                     | Operator+                        | X+Y, X+=Y if no __iadd__                                                                              |
+| __or__                      | Operator                         | (bitwise or)                                                                                          |
+| __repr__, __str__           | Printing, conversions            | print(X), repr(X), str(X)                                                                             |
+| __call__                    | Function calls                   | X(*args,**kargs)                                                                                      |
+| __getattr__                 | Attribute fetch                  | x.undefined                                                                                           |
+| __setattr__                 | Attribute assignment             | X.any = value                                                                                         |
+| __delattr__                 | Attribute deletion               | del X.any                                                                                             |
+| __getattribute__            | Attribute fetch                  | X.any                                                                                                 |
+| __getitem__                 | Indexing,slicing,iteration       | X[key],X[i:j], for loops and other iteration if no __iter__                                           |
+| __setitem__                 | Index and slice assignment       | X[key] = value, X[i:j] = iterable                                                                     |
+| __delitem__                 | index and slice deletion         | del X[key], del X[i:j]                                                                                |
+| __len__                     | length                           | len(x), truth tests if no __bool__                                                                    |
+| __bool__                    | boolean tests                    | bool(x), truth tests (named __nonzero__ in 2.X)                                                       |
+| __lt__,__gt__               | comparisions                     | < > <= >= == !=                                                                                       |
+| __le__,__ge__               |                                  |                                                                                                       |
+| __eq__,__ne__               |                                  |                                                                                                       |
+| __radd__                    | Right-side Operators             | Other + X                                                                                             |
+| __iadd__                    | In-place augmented operators     | X += (or else __add__)                                                                                |
+| __iter__,__next__           | Iteration contexts               | I = iter(X), next(I), for loops, in if no __contains__, all comprehensions, map(F,X), __next__ in 2.X |
+| __contains__                | Membership test                  | item in X (any iterables)                                                                             |
+| __index__                   | integer value (not index slice!) | hex(X),bin(X),oct(X)                                                                                  |
+| __enter, __exit__           | Context manager                  | with obj as var                                                                                       |
+| __get__, __set__,__delete__ | Descriptor attributes            | X.attr, X.attr = value, del X.attr                                                                    |
+| __new__                     | Creation                         | Object creation, before __init__                                                                      | 
+  
+*** __repr__ and __str__ overloading
+**** __str__ is called when the object is passed into print() or str()
+**** __repr__ is called when the object is passed to eval() and all other context. The returned string is for developer or Python internal use to convert to an object
+     - When I create an object: myInst = myClass()
+       + myInst #will print whatever __repr__ returns
+       + print(myInst) # will print whatever __str__ returns if __str__ is explicited defined besides __repr__
+     - Notice that if we only overload __repr__ without __str__, __str__ would be the same as __repr__ unless we define one explicitly
+     - __str__ is for Users 
+     - __repr__ is for developers (for Python shell)
+     - if __str__ is not defined, __repr__ is used in print() and str()
+
+*** Intercepting Slices
+**** The best way is to use __getitem__ attributes (in both 3.X and 2.X)
+***** L[2] will call __getitem__(self, index)
+***** L[1:2] will return a *slice object*. So when needed, we can add a type test inside __getitem__ to determine whether index or slice
+      - A slice object has three attributes: start, stop, step
+      - When L[1:2] is called, a slice object will be passed as the second argument to __getitem__ method
+      - class Indexer:
+	   data = [1,2,3,4]
+	   def __getitem__(self,index):
+	      if isinstance(index, int): #regular indexing
+	         return data[index]
+	      else: #slice
+	         return data[index.start,index.stop]
+**** In Python 2.X, we can overload __getslice__(self,i,j) and __setslice__(self,i,j,seq)
+     - This feature is removed in Python 3.X. So even in 2.X we should use __getitem__ and __setitem__ for both compatability
+**** Notice that __index__ is not indexing!!!! It returns a number when hex(), bin() and oct() is in the context call
+     - class C:
+          def __index__(self):
+             return 255
+     - X = C()
+       hex(X) #0xff
+       bin(X) #0b11111111
+*** Index Iteration in for loops: __getitem__
+**** Other intercepting slices and indexing, __getitem__ also provides the way for use in for loops
+**** Baically in for statment, it starts by indexing a sequence from 0 until it gets an exception
+**** Same thing happens with __getitem__. In for statement, it starts iterating from passing 0 to __getitem__ until hit an exception
+     - class StepperIndex:
+          def __getitem__(self,i):
+             return self.data[i]
+     - X = StepperIndex()
+       X.data = "spam"
+       for item in X:
+          print(item,end=' ')# s p a m
+*** Iterable Objects: __iter__ and __next__ : more preferable than __getitem__ in iteration
+**** All iteration contexs in Python will try __iter__ method first before trying __getitem__ (prefer __iter__)
+     - Typically __next__ method needs to be overloaded alone with __iter__ if the same class is returned as iterator
+     - class Squares:
+          def __init__(self,start,stop):
+             self.value = start- 1
+             self.stop = stop
+          def __iter__(self): #return self because the __next__method is part of this class itself. In more complex scenarios, it may return other class
+             return self
+          def __next__(self):
+             if(self.value == self.stop):
+                raise StopIteration
+             self.value += 1
+             return pow(self.value,2)
+     - for x in Squares(1,5):
+          print x # 1 4 9 16 25
+**** Multiple Iterators on One Object
+***** Sometimes we need a seperate class to model the iterator instead of returning itself
+      - class SkipObject:
+	   def __init__(self,wrapped):
+	      self.wrapped = wrapped
+	   def __iter__(self):
+	      return SkipIterator(self.wrapped)
+      - class SkipIterator:
+	   def __init__(self,wrapped):
+	      self.wrapped = wrapped
+	      self.offset = 0
+	   def __next__(self):
+	      if self.offset >= len(self.wrapped):
+	         raise StopIteration
+	      else:
+	         item = self.wrapped[self.offset]
+	         self.offset+=2
+	         return item
+**** __iter__ with yield
+     - no need to overload __next__
+     - class Squares:
+          def __init__(self,start,stop):
+             self.start = start
+             self.stop = stop
+          def __iter__(self):
+             for value in range(self.start,self.stop+1):
+                yield pow(value,2)
+*** Membership: __contains__, __iter__, and __getitem__ (__contain__ is prefered over __iter__, which is prefered over __getitem__ in "in" context)
+**** __contains__ is preferred in *in* case:  's' in obj
+**** __iter__ is preferred for iteration
+**** __getitem__ is fallback for iteration, also for index, slice
+*** Attribute Access: __getattr__ and __setattr__
+**** __getattr__ is called when a method is not defined in either class or its super classes
+     - class Empty:
+          def __getattr__(self, attrname):
+             if attrname == 'age':
+                return 40
+             else:
+                raise AttributeError(attrname)
+     - X = Empty()
+       X.age #40
+       X.name #AttributeError: name
+**** __setattr__ is called if __setattr__ is defined and when a new attibute is assigned outside of class (BUT! WATCH FOR INFINITE LOOP!)
+***** Always set the new attribute through __dict__ or its super class
+      - class Control:
+	   def __setattr__(self,attr,value):
+	      if attr == 'age':
+	         self.__dict__[attr] = value + 10
+	      else:
+	         raise AttributeError(attr+" not allowed")
+      - if not use __dict__ to set the new attribute, an infinite recursive call will happen because when X.age = 40 is called, python
+	calls Control's  __setattr__ and in the __setattr__, it calls X.age again, which calls __setattr__ again.....
+**** __delattr__ is similar to __setattr__ (watch for the infinite loop)
+     - is called if del object.attr is called outside the class
+*** Right-side addition (and other similar operators)
+**** example
+     - class adder:
+          def __add__(self,val):
+             return self.val+val
+          def __radd__(self,val):
+             self.__add__(self,val)
+
+          #or:
+          __radd__ = __add__ #cut of the middle man
+*** In-place Addition +=
+**** Example:
+     - class adder:
+          def __iadd__(self,val):
+             self.val += val
+             return self
+*** Make calling an object possible: __call__
+**** By overloading __call__, we can allow outside world to actually "call" the object...
+     - class Callee:
+          def __call__(self,*arg,**argv):
+             print("called",arg,argv
+     - c = Callee()
+       c(1,2,3,x=2,y=7) #called (1,2,3)("x":2,"y":7) #notice function arg transfer an iterable into a tuple and pass to *arg
+
+     - class Acallee:
+          def __call__(self,*parag,sep=0,**argv): #3.x keyword only!!
+             pass #do something here like print in python 3.0  
+
+*** Comparison: __lt__,__gt__,__ne__,__eq__, __cmp__ (removed in python3.X)
+**** In Python 2.X, __cmp__ is the fallback of other comparison operators
+*** __bool__ and __len__:  USE __bool__ IN 3.X and __nonzero__ IN 2.X!!!!!!
+**** In bool context, Python firstly tries __bool__, if not defined, Python then tries __len__ (Python 3.X)
+**** Python prefers __bool__ over __len__!!!
+**** In Python 2.X, it uese __nonzero__ instead of __bool__. 3.X simply renamed __nonzero__ to __bool__. __len__ is still the fallback
+**** If we use __bool__ in Python 3.X, it is silently ignored!!!! What a punk
+** Bound or Unbound (first glance at static methods in a class): Python 2.X doesn't support unbound call 
+*** Unbound class method objects: no self
+**** Python 2.X does not allow calling this method without passing an instance
+**** Python 3.X allows calling this method through class instance
+**** Example
+     - class Selfless:
+          def selfless(arg1,arg2):
+             return arg1+arg2
+     - X = Selfless()
+       Selfless.selfless(1,2) #works in 3.X ONLY! Failed at 2.X
+       
+*** Bound class method objects: with self
+**** Python automatically pair the instance object to the first argument of the bound method under class instance
+** Class Factory (assume I am already familiar with the usage of factories like UVM)
+*** Example
+    - def factory(aClass,*pargs,**kargs):
+         return aClass(*parags,**kargs)
+    - object1 = factory(Person, "Arthur","King")
+      object3 = factory(Person,name='Brain')
+** New Style
+*** In Python 2.X, all object instances are the same type! But not in Python 3.X
+    - class A:
+         pass
+      class B:
+         pass
+    - a = A()
+      b= B()
+      type(a) == type(b) # True in 2.X and false in 3.X: In 3.X, Python actually compare the class difference
+    - In python 2.X: needs to do
+      type(a.__class__) == type(b.__class__)
+*** Changes
+**** All new-style classes inherit from *object* in Python 2.X. In 3.X, this is added automatically above the user-defined root
+**** Minor changes are not listed in this doc
+**** New-style classes have new tools: slots, properties, descriptors, super and __getattribute__ method
+***** __getattribute__ is not the same as __getattr__, as it is called for every attribute call (watch for infinite loop when modifying this)
+**** __slot__ can limit new attributes to be added to the class - add in the top class
+     - Python reserves just enough space in each instance to hold a vlaue for each slot attribute - save memory!
+     - Best to use for rare cases where large numberes of  instances in a meory-critical application
+     - class limiter(object):
+           __slot__ = ['age','name','job'] #only names in __slots__ list can be assigned as intance attributes
+     - Slots in subs are pointless when absent in supers
+     - Slots in supers are pointless when absent in subs
+     - Slots typically needs to include  __dict__ 
+** Static Methods
+*** Python has 3 types of methods:
+    - instance method: pass a self
+    - static method: no instance passed
+    - class method: gets a class, not instance
+    - class Methods:
+         def imeth(self,x): #instance method
+            pass
+         def smethod(x): #static: no instance
+            print([x])
+         def cmethod(cls,x): #class: get class, passing the class to the first argumetn is automatically done!
+            print([clk,x])
+
+         smethod = staticmethod(smethod) #make smethod a static method
+         cmethod = classmethod(cmethod) #make cmethod a class method
+
+*** In Python 2.X
+**** Fetching a method from a class produces an unbound method, which cannot be called without manually passing an instance
+**** We must ALWAYS declare a method as static in order to call it without an instance, whether it is through a class or instance
+*** In Python 3.X
+**** Fetching a method from a class produces a simple function,which can be called normally with no instance present
+**** We need NOT declare such methods as static if they will be called through a class only, But we MUST do so in order to call them through an instance
+** A note about super()
+*** One of the biggest downside in 3.X in using super
+**** Calling super() in a method of a subclass will inspect the call stack in order to automatically locate *self* argument and find the superclass
+**** Then it pairs the two in a special proxy object that routes the later call to the superclass version of the method. So no need to pass self in super
+**** e.g.  self.__class__.__bases__[0] # this is a violation of undamental Python idiom for a single use case!
+**** So in MI, super() will only calls one of the super class's method if both exist
+     - class C(A,B):
+          def act(self):
+*** Limitation: Operator overloading
+**** We could use super() to call super class's __x__ methods. But note that direct operators do not work
+     - class D(C):
+          def __getitem__(self,ix):
+             C.__getitem__(self.ix) #This works
+             super().__getitem__(ix) #This works too and no need self because Python automatically checks for it
+             super()[ix] #THIS WON"T WORK!
+*** Complex use if in 2.X Python
+    - class D(C):
+         def act(self):
+            super(D,self).act() #Too complex to use... But this is compatable in 3.X
+*** When to use super() is good??? But still using it will increase the complexity of maintaining codes
+**** Runtime clalss Changes
+***** Superclass that might be changed at runtime dynamically preclude hardcoding their names in a subclass's method
+***** But super() will happily look up the current superclass dynamically
+***** Rare case this is.
+      - class X:
+	   def m(self): print('X.m')
+	class Y:
+	   def m(self): print('Y.m')
+	class C(X):
+	   def m(self): super().m()
+      - i = C()
+	i.m() #call X's m method
+	C.__bases__ = (Y,) #changing superclass at runtime!!
+	i.m() #call Y's m method
+**** Cooperative Multiple Inheritance Method Dispatch (see book. Not studied)
+** use property to intercept attribute calls (get,set,del,doc)
+*** property allows us to route a specific attribute's get,set and delete operations to functions or methods we provide
+*** attribute = property(fget,fset,fdel,doc) #default is None if any one is not passed 
+    - class Person:
+         def __init__(self, name):
+            self._name = name
+         def getName(self):
+            print ('fetch...')
+            return self._name
+         def setName(self,value):
+            print("change...')
+            self._name = value
+         def delName(self):
+            print ('remove...')
+            del self._name
+         name = property (getName,setName,delName,"name property docs")
+* Exceptions
+** try statement clauses
+| Clause Form                   | Interpretation                                           |
+|-------------------------------+----------------------------------------------------------|
+| except:                       | catch all (or all other) exceptions types                |
+| except name:                  | catch a specific exception type only                     |
+| except name as value:         | catch a specific excpetion and assign its instance       |
+| except (name1,name2):         | catch any listed exception types                         |
+| except (name1,name2) as value | catch any listed exception types and assign its instance |
+| else:                         | Run if no exceptions are raised in the try block         |
+| finally:                      | always perfrom this block on exit                        |
+*** use *Exception as* to print the exception instance explicitly
+    - try:
+         1/0
+      except Exception as X:
+         print X #ZeroDivisionError('integer division or modulo by zero')
+** Avoid except but no type
+*** avoid this
+    - try:
+         #do something
+      except SomeExcpt:
+         #do something
+      except: #BAD
+*** except all other might catch genuine programming mistakes for which we want to see as an error message
+*** Even ctrl+c will trigger exceptions. We probably don't want to catch that, which could make the program unstoppable
+*** In Python 3.X, we can use except Exception: to catch all possible exceptions, except exits!
+    - try:
+         action()
+      except Exception:  #catch all exceptions, except exits
+         other_action() 
+*** Exception class excludes SystemExit, KeyboardInterrupt and GeneratorExit)
+** User Defined Exceptions: inherits from Exception class
+   - class AlreadyGotOne(Exception): pass
+     
+     def grail():
+        raise AlreadyGotOne()
+
+     try:
+        grail()
+     except AlreadyGotOne as X:
+        print('got exception: AlreadyGotOne')
+        print('caught : %s ' % X.__class__)
+     else:
+        print "Good without any exceptions!"
+** try/finally
+*** Code in *finally* will always been executed regardless of whether exceptions were raised in try block
+*** This could be used to ensure that server shutdown code is run when an exception occurs and program can exit safely with server shut down
+*** Example
+    - with open('lumberjack.txt','w') as file: #always close file on exit
+         file.write("the larch")
+** raise
+*** Propagating Exceptions with raise (raise most recent exception)
+    try:
+       raise IndexError("spam")
+    except IndexError:
+       print ('propagating')
+       raise #raise most recent exception
+*** Python 3.X Exception Change: raise from
+    - try:
+         1/0
+      except Exception as E:
+         raise TypeError('Bad') from E
+** assert statement
+*** assert test, data #data part is optional
+*** the same thing as
+    if __debug__:
+       if not test:
+          raise AssertionError(data)
+** Use exception hierachies solves the delimma of maintaining manual exceptions
+   - class NumErr(Exception): pass
+     class DivZero(NumErr): pass
+     class Oflow(NumErr): pass
+
+     def func():
+        ...
+        raise DivZero() #note: needs to create an instance object! don't just raise the class 
+** Some built-in exceptions
+*** Exception class excludes SystemExit, KeyboardInterrupt and GeneratorExit)
+*** ArithmeticError: is super class of OverflowError, ZeroDivisionError and FloatingPointError
+*** LookupError: is super class of IndexError and KeyError as well as some Unicode lookup errors
+* Decorators and Metaclasses
+** Function decorators - specifies special operation modes by wrapping functions in an extra layer of logic implemented as another function (metafunction)
+*** Syntax: the following is essentially the same
+    - @staticmethod
+      def meth():
+         pass
+
+    - def meth():
+         pass
+      meth = staticmethod(meth)
+*** Function decorators allow us to change (add) behavior of a function (or callback)
+    #+BEGIN_SRC Python
+    def my_decorator(some_func):
+       def wrapper(): #wrapper now replaces some_fun function. calling this one indeed
+          num = 10
+	  if num == 10:
+	     #do something
+	  some_func()
+	  print("callback can be done here too")
+       return wrapper #note here we need to return the function instead of calling it!
+
+    @my_decorator
+    def some_fun():
+       pass
+
+    some_fun() #this is equivalent to calling wrapper() above
+    #+END_SRC
+     
+*** Function Tracer example
+    - class Tracer:
+         def __init__(self,func):
+            self.calls =0
+            self.func = func
+         def __call__(self,*args):
+            self.calls += 1
+            print ('call %s to %s' % (self.calls, self.func.__name__))
+            return self.func(*args)
+
+      @Tracer
+      def spac(a,b,c):
+         return a+b+c  #spac = Tracer(spac) :  #call 1 to spac\n 6
+
+      print(spac(1,2,3)) #since spac now is an instance object of Tracer, spac(1,2,3) would invoke __call__
+** Class decorators - adds support for management for whole objects and their interfaces (often called metaclasses)
+*** The decoration process call __init__ in the decorator class, then immediately calls __call__
+*** When users pass arguments to the decorator (e.g @decorator_with_arg("hello",1,2)), the function to be decorated is not passed to the constructor!
+#+BEGIN_SRC python
+class decorator_with_arguments(object):
+    def __init__(self,arg1,arg2,arg3):
+       print("inside __init__") # this happens during decorating process
+       self.arg1 = arg1 #this is from the decorator argument
+       self.arg2 = arg2 #this is from the decorator argument
+       self.arg3 = arg3 #this is from the decorator argument
+    def __call__(self,f):
+       print("inside __call__")  #this happens during decorating process
+       def wrapper(*arg):
+          print("inside wrap")   #this happens after decorating process and when the target function is called! These are from the real argument
+	  print("decorator arguments:",self.arg1,self.arg2,self.arg3)
+          f(*args)
+       return wrapper
+
+@decorator_with_argumetns("hello","world",32)
+def hello(a1,a2,a3,a4):
+   print("sayHello argument:",a1,a2,a3,a4)
+print("after decoration)
+
+hello("say","hello","argument","list")
+#+END_SRC
+    
+*** Augment the classes with instance counters and any ohter data required
+    - def count(aClass):
+         aClass.numInstances = 0
+         return aClass
+      
+      @count
+      class Spam: ...
+
+      @count
+      class Sub: ...
+
+      @count
+      class Other(Sub) ...
+* with/as: Context Managers (as is optional)
+** Designed to work with context manager objects
+** Code run inside with block will be guarenteed to run regardless of exceptions
+** Syntax
+    - with expression [as variable]:
+         with-block
+    - expression here is assumed to return an object that supports the context management protocol
+    - This object may also return a value that will be assigned to the name variable if the optional as clause is present
+** The Context Management Protocol (customized context manager)
+*** An object known as a context manager must have __enter__ and __exit__ methods
+*** __enter__ is called and the value it returns is assigned to the variable in the as clause if present, or discarded otherwise
+*** After __enter__ is executed, code in the nested with block is executed
+*** If an exception is raised in *with* block, __exit__(type,value,traceback) method is called with the exception details
+    - (type,value,traceback) are the same three values returned by sys.exc_info
+*** If no exception raised, __exit__(None,None,None) will be called
+** Multiple Context Managers in 3.1,2.7 and Later
+   - with open('data') as fin, open('res','w') as fout:
+        for line in fin:
+           if 'some key' in line:
+              fout.write(line)
+* Unicode and Byte Strings
+** Encoding is the process of translating strings into raw bytes in targeting format
+*** Example
+    - S = 'ni'
+      S.encode('utf16'),len(S.encode('utf16') #(b'\xff\xfen\x00i\x00',6)
+*** After encoding, the string (in bytes) can be then written to external files
+** Decoding is the process of translating raw bytes to strings in Python
+** type: bytes and bytearray (mutable)
+*** Use b'xxx' to use bytes 
+*** Byte is used for image/audio/other pure binary data that shouldn't be encoded (Only ASCII)
+*** Used by file I/O opened by wb, rb...
+* Decorators: A decorator itself is a callable that returns a callable
+** Function decorators can be used to manage both function calls and function objects!
+** Decorators are free to return either the original class or an inserted wrapper object
+** Class decorators can be used to manage both class instances and classes themselves
+** A decorator itself is a callable that returns a callable!
+** Basic Usage: name rebinding and use a class decorator to wrap
+*** exp: function decorator
+    - @decorator
+      def F(arg):
+         ...
+
+      #same as
+      F = decorator(F)(arg)
+*** exp: using a class to wrap functions
+    - class decorator:
+         def __init__(self,func):
+            self.func = func
+         def __call__(self,*args):
+            #use self.func and args
+      
+      @decorator
+      def func(arg):
+         #do something
+** class decorator: commonly coded as factory
+*** exp
+    - def decorator(cls):
+         class Wrapper:
+            def __init__(self,*args):
+               self.wrapped = cls(*args)
+            def __getattr__(self,name): #this basically intecepts any attributes get operations!
+               return getattr(self.wrapped,name)
+         return Wrapper
+
+      @decorator
+      class C:
+         def __init__(self,x,y):
+            self.attr = 'spam'
+
+      x = C(6,7)  #really calls Wrapper(6,7)
+      print(x.attr) #runs Wrapper.__getattr__, prints 'spam'
+** we can add multiple layers of decoratos on top of a function or class
+*** exp
+    - @A
+      @B
+      @C
+      def f(...):
+
+    - def (f...): #same as 
+      f = A(B(C(f)))
+** Some Usage Examples
+*** Tracing Calls
+    - code #this case no need to return callables since __call__ intercepts calls and call it for you
+      class tracer:
+         def __init__(self,func):
+            self.calls = 0
+            self.func = func
+         def __call__(self,*args):
+            self.calls += 1
+            print('call %s to %s' % (self.calls,self.func.__name__))
+
+      @tracer
+      def spam(a,b,c):
+         print(a+b+c)
+* @property decorator (very important so seperate item)
+** Must inherit "object" in Python 2.7
+** We don't want to directly access a property inside a class.
+*** Could be err prone
+*** Can't check boundaries or type
+** Use @property to convert a method to a property. @property decorate will create a new property @score.setter
+*** exp
+    class Student(object):
+       
+       @property
+       def score(self):
+          return self._score
+
+       @score.setter
+       def score(self,value):
+          if not isinstance(value,int):
+	     raise ValueError("score must be an integer")
+	  if value <0 or value >100:
+	     rasie ValueError("score must between 0-100")
+	  self.score = value
+** @property enhances code stability and maintainence. Good for encapsulation
+* launch shell command/subprocess
+** subprocess.call('echo $HOME', shell=True) #shell == true makes subprocess to 
+** A quick way to launch shell cmd and get return string
+#+BEGIN_SRC python
+proc = subprocess.Popen(["cat",'/tmp/bax"],stdout=subprocess.pipe)
+(out,err) = proc.communicate()
+#+END_SRC
+* itertools - module that implements a number of iterator building blocks to improve memory efficiency and speedup execution time 
+** In python2, functions like zip, map returns list. We must use itertool to return iterators on those. In python3, by default zip/map return iterators (using itertools!)
+** itertools.accumulate(iterable[,func]) 
+*** make an iterator that returns accumulated sums or results of other binary functions (in func if specified)
+*** if func is supplied, it should be a function of two arguments. elements of the input iterable maybe any type
+*** Roughly equivalent to
+#+BEGIN_SRC python
+def accumulate(iterable,func=operator.add):
+   it = iter(iterable)
+   try:
+      total = next(it)
+   except StopIteration:
+      return
+   yield total
+   for element in it:
+      total = func(total,element)
+      yield total
+#+END_SRC
+*** e.g: input=[1,2,3,4], return [1,3,6,10,15] if no func is specified
+** itertools.chain(*iterables) 
+*** make an iterator that returns elements from the first iterable until it is exhausted, then proceeds to the next iterable, until all are exhausted
+*** Notice the input argument is *iterable instead of a single list or tuple!
+**** So only works when multiple arguments are there and they are iterable - itertools.chain('abc','def') - > a,b,c,d,e,f
+**** It won't work if itertools.chain(['abc','def']) !!!!! Use itertools.chain.from_iterable
+*** e.g: input = ('ABC','DEF') -> A B C D E F
+*** an iterator of iterator kind of thing
+** itertools.combinations(iterable,r) - return r length subsequences of elements from the input iterable
+*** e.g: combinations('ABCD',2) -> AB AC AD BC BD CD
+** itertools.combinations_with_replacement(iterable,r) 
+*** return r length subsequences of elements from the input iterable allowing individual elemnts to be repeated more than once
+** itertools.permutations(iterable,r=None)
+*** Return successive r length permutations of elements in the iterable
+*** permutations('ABCD',2) ->AB AC AD BA BC BD CA CB CD DA DB DC
+** itertools.compress(data,selectors)
+*** Make an iterator that filters elements from data returning only those that have acorresponding element in slectors that evaluates to True.
+*** Stops when  either data or selectors iterables has been exhausted
+*** compress('ABCDEF',[1,0,1,0,1,1]) -> A C E F
+*** Roughly equivalent to
+#+BEGIN_SRC python
+def compress(data,selectors):
+   #compress('ABCDEF',[1,0,1,0,1,1]) -> A C E F
+   return (d for d,s in zip(data,selectors) if s)
+#+END_SRC
+** itertools.count(start=0,step=1)
+*** Make an iterator that returns evenly spaced values starting with number "start"
+*** Often used as an argument to map() to generate consecutive data points. 
+*** Also used in zip() to add sequence numbers.
+*** count(10) -> 10,11,12,13...
+*** count(2.5,0.5) -> 2.5,3.0,3.5 ...
+** itertools.cycle(iterable)
+*** Make an iterator returning elements from the iterble and saving a copy of each.
+*** When the iterable is exhausted, return elements from the saved copy. Repeats indefinitely.
+*** cycle('ABCD') -> A B C D A B C D...
+** itertools.dropwhile(predicate,iterable) - produce output until predicate firstly becomes false
+*** Make an iterator that drops elements from the iterable as long as the predicate is true
+*** Afterwards, returns every element.
+*** Note: the iterator does not produce any output until predicate first becomes false. So this might have a lengthy start-up time
+*** dropwhile(lambda x:x<5,[1,4,6,4,1]) -> 6,4,1
+** itertools.filterfalse(predicate,iterable)
+*** Make an iterator that filters elemtns from iterable returning only those for which the predicate is false.
+*** if predicate is None, return the items that are false.
+*** filterfalse(lambda x: x%2, range(10)) -> 0 2 4 6 8
+** itertools.groupby(iterable,key=None)
+*** Make an iterator that retuns consecutive keys and groups from the iterable. The key is a function computing a key value for each element
+*** if not specified or is None, key defaults to an identity function and returns the element unchanged.
+*** groupby is silimiar to Unix "uniq".
+*** [k for k,g in groupby('AAAABBBCCAABBB')] -> A B C D A B
+*** [list(g] for k,g in groupby('AAAABBBCCD')] -> AAAA BBB CC D
+*** return a "list(in fact a groupby object)" of tuples. each tuple's first element is the unique char and the second element is the iterator of exact number of char
+>>> a = it.groupby('AAAABBBCCD')
+>>> list(a)
+[('A', <itertools._grouper object at 0x10b5a7b70>), ('B', <itertools._grouper object at 0x10b5a7ba8>), ('C', <itertools._grouper object at 0x10b5a7be0>), ('D', <itertools._grouper object at 0x10b5a7c18>)]
+
+** itertools.islice(iterable,stop) & itertools.islice(iterable,start,stop[,step])
+*** returns selected elements from the iterable
+*** islice('ABCDEFG',2) -> A,B
+*** islice('ABCDEFG',2,4) -> C,D
+*** islice('ABCDEFG',2,None) -> C,D,E,F,G
+*** islice('ABCDEFG',0,NONE,2) -> A,C,E,G
+
+** itertools.product(*iterables,repeat=1)
+*** Cartesian product of input iterables
+*** roughly equivalent to (x,y) for x in A for y in B
+*** product('ABCD','xy') ->Ax Ay Bx By Cx Cy Dx Dy
+*** product(range(2),repeat=3) -> 000 001 010 011 100 101 110 111
+** itertools.repeat(object[,times])
+*** Make an iterator that retuns object over and over again (run indefinitely unless the times argument is specified.
+** itertools.starmap(function,iterable)
+*** Make an iterator that computes the function using arguments obtained from the iterable
+*** Used instead of map() when argument parameters are already grouped in tuples from a single iterable
+*** Used in parallel with map(). The distinction is like function(a,b) and function(*c)
+*** starmap(pow,[(2,5),(3,2),(10,3)]) -> 32 9 1000
+** itertools.takewhile(predicate,iterable)
+*** Make an iterator that returns elements from the iterable as long as the predicate is true.
+*** Once predicate becomes false, we stop
+*** takewhile(lambda x: x<5,[1,4,6,4,1]) -> 1 4
+** itertools.tee(iterable,n=2)
+*** Return n independent iterators (in a tuple) from a single iterable
+*** c,d=itertools.tee([1,2,3],2)  - then c,d and iterate through the list independently
+** itertools.zip_longest(*iterables,fillvalue=None)
+*** Make an iterator that aggregates elements from each of the iterables. if the iterables are of uneven length, missing values are filled with fillvalue
+*** Iteration continues until the longest iterable is exhausted
+*** zip_longest('abcd','xy',fillvalue='-') -> ax by c- d-
+* collections - module that implements high-perf containers alternatives to Python built-in dict,list,set,tuple
+** namedtuple(typename,filed_names[,verbose=False][,rename=False])
+*** returns a new tuple subclass named typename.
+*** The new subclass is used to create tuple-like objects that have fields accessible by attribute lookup AND being indexable and iterable
+*** if rename is true,, invalid fieldnames are automatically replaced with posistional names.
+*** Named tuples are especially useful for assigning field names to result tuples returned by csv or sqlite3 modules
+*** a = namedtuple('Point',['x','y'],verbose = True)
+**** p = Point(11,y=22)
+**** p[0] + p[1] -> 33
+**** x,y = p -> unpacked
+**** p.x+p.y -> 33
+** deque(iterable[,maxlength])
+*** If iterable is not specified, deque is empty
+*** Thread-safe,memory efficient appends and pops form either side with approx (O(1))
+*** methods
+| Methods        | Description                                                                   |
+|----------------+-------------------------------------------------------------------------------|
+| append(x)      | add x to the right side                                                       |
+| appendleft(x)  | add x to the left side                                                        |
+| clear()        | remove all elements                                                           |
+| count(x)       | count number of deque                                                         |
+| extend         | extend the right side by appending from iterable                              |
+| extend_left(x) | extend the left side by appending from iterable                               |
+| pop()          | remove and return from right                                                  |
+| popleft()      | remove and return from left                                                   |
+| remove(value)  | remove the first occurance of value. if not found, raise ValueError exception |
+| reverse()      | reverse the elements of hte deque in-place and return None                    |
+| rotate(n=1)    | rotate the deque n setps to the right. if n is negative, to the left          |
+** Counter
+*** a tool is provided to support convenient and rapid tallies
+*** cnt = Counter()
+*** e.g
+#+BEGIN_SRC python
+cnt = Counter()
+for word in ['red','blue','red','green','blue','blue']:
+   cnt[word]+=1
+cnt # Counter({'blue':3,'red':,'green':1})
+#+END_SRC
+*** methods
+| Methods                         | Description                                                                |                                                        |
+|---------------------------------+----------------------------------------------------------------------------+--------------------------------------------------------|
+| elements()                      | return an iterator over elements repeating each as many times as its count | #['a','a','a','b','c','c'] if Counter(a=3,b=2,c=2,d=0) |
+| most_common()                   | return a list of n most common elements and their counts                   |                                                        |
+| subtract([iterable-or-mapping]) | elements are subtracted from an iterable or from another mapping           |                                                        |
+| update([iterable-or-mapping])   | elemetns are counted from an iterable or added-in from another mapping     |                                                        | 
+  
+** OrderedDict([item])
+*** Remember the order of elements being added. If overwrite, the original order is unchanged.
+*** OrderedDict.popitem(last=True) - new method for ordered dict, returning and remove the specified key
+** defaultdict
+*** new dict-like object that overrides one method and adds one writable instance variable.
+*** if an entry is not created yet, the default_factory will create a data type automatically ready to be used directly
+*** d[5] #won't give error is no-exist. Will create an empty list for d[5] if default_factory is list
+#+BEGIN_SRC python
+s = [('yellow',1),('blue',2),('yellow',3),('blue',4),('red',1)] #we want each element of the dict to be a list of all numbers shown indexed by color
+d = defaultdict(list)
+for k,v in s:
+   d[k].append(v)
+d.items() #[('blue',[2,4]),('red',[1]),('yellow',[1,3])
+* Python for Data Analysis - at page 103
+** ipython - an enhanced Python Interpreter, which allows to explore the results interactively when a script is done executing
+*** Tab completion (objects, functions, etc)
+*** Introspection - use question mark (?) after a variable will display some general information about the object (will even show docstring for functions)
+#+BEGIN_SRC python
+b?
+#Type: list
+#+END_SRC
+*** %run command - run any file as a Python program inside the env of IPython session
+**** %run ipython_script_test.py
+**** Use %run -i instread of plain python will give a script access to variables already defined in the interactive IPython namespace
+*** Magic commands - any special commands prefixed by symbol %
+**** %timeit - check the execution time of any Python statement, such as a matrix multiplication
+#+BEGIN_SRC python
+In [20]: a = np.random.randn(100,100)
+In [20]: %timeit np.dot(a.a)
+100000 loops, best of 3: 20.9 us per loop
+#+END_SRC
+**** %time statement - report execution time of a single statement
+**** %debug (use %debug? to view its doc string) - Activate the interactive debugger (two modes)
+***** mode1 - activate debugger before executing code. This way, we can set a breakpoint to step through code from the point
+***** mode2 - activate debugger in post-mortem mode (can run without argument)
+      - if an exception occurs, this lets you inspect its stack frames interactively
+**** %pdb - inspect stack frames automatically when exception occurs
+**** %pwd - view current path
+**** %paste - takes whatever text in the clipbard, executes it as a single block in the shell
+**** %cpaste - will prompt for which lines of pasted code to run, so we have the freedom to paste as much code as we like before executing it.
+**** %quickref - display Ipython quick reference card
+**** %magic - display detailed doc for all available magic commands
+**** %hist - print command input history
+**** %reset - delete all variables/names defined in interactive namspace
+**** %page OBJECT - pretty-print the object and display it through a pager
+**** %prun staetment - execute statement with cProfile and report the profiler output
+**** %who, %who_is, %whos - display variables defined in interactive namespace, with varying levels of information/verbosity
+**** %xdel variable delete a variable and attempt to clear any references to the object in the IPython internals
+*** Matplotlib Integration - IPython is also good due to the nice integrations with data visualization
+**** %matplotlib magic function configures its integration with the IPyhton shell or Jupyter notebook
+** Jupyter Notebook
+*** Browser version of interactive Python interpreter.
+*** %load - same as %run in ipython
+** SciPy - a collection of packegs addressing a number of different standard problem domains in scientific computing
+*** Packages included
+**** scipy.integrate - numeircal integration routines and differential equation solver
+**** scipy.linalg - linear algebra routines and matrix decompositions extending beyond those provided in numpy.linalg
+**** scipy.optimize - function optimizers (minimizers) and root finding algorithms
+**** scipy.signal - signal processing tools
+**** scipy.sparse - sparse matrices and sparse linear system solvers
+**** scipy.special - wrapper around SPECFUN, a fortran library implementing many common methematical functions such as gamma function
+**** scipy.stats - standard continuous and discrete probability distributions (density functions, samplers, continuous distribution function), stat tests
+** scikit-learn - premier general purpose machine learning toolkit
+*** Classficication: SVM, nearest neighbors, random forest, logistic regression, etc
+*** Regression: Lasso, ridge regression,etc
+*** Clustering: k-means, spectral clustering, etc
+*** Dimensionality reduction: PCA, feature selection, matrix factorization, etc
+*** Model Selection: Grid search, cross-validation, metrics
+*** Preprocessing: Feature extraction, normalization
+** statsmodel - statistical analyss package that was seeded by work from standford U.
+*** Regression models: linear regression, generalized linear models, robust linear models, linear mixed effects models, etc
+*** Analysis of variance (ANOVA)
+*** Time series analysis
+*** Nonparametric methods: kernel density estimation, kernel regression
+*** visualization of statistical model results
+** NumPy Basics - arrays and vectorized computation
+*** 
+* Tricks Learned
+** Remove duplicates in a list (order is not maintained by using this method): Use set
+   - A set is an unordered collection of unique elements
+   - L  = [1,2,3,3,1,2,5]
+     s = list(set(L))
+** Using Regular Expression
+*** (?P<name>...): matched substring matched by group is accessible via the symbolic group name
+    - (?P=quote)
+      \1
+    - m.group('quote')
+      m.end('quote')
+*** (?=...) matches if ... matches next but doesn't consume any of the string (lookahead assertion)
+    Isaac(?=Asimov) will match 'Isaac' only if it's followed by "Asimov'
+*** (?!...) matches if ... doesn't match next (negative lookahead assertion)
+    - Isaas(?!Asimov) will match "Isaac' only if it is not followed by 'Asimov'
+*** re.compile(pattern,flags=0) compiles a regular expression pattern into a re object, which can be used in match() and search() methods
+    - prog = re.compile(pattern) #more efficient when the same pattern would be used several times
+      result = re.match(string)  OR
+    - result = re.match(pattern,string)
+*** re.search(pattern,string,flags=0) scan through string looking for the fisrt location where the regular expression matches and returns a match object
+    - returns None if not found 
+*** re.match(pattern,string,flags=0) if 0 or more chars *at the beginning of* string match, returns the match object
+    - only match the beginning (even in MULTILINE mode)
+    - So if the match might be anywhere in the string, use search
+*** re.fullmatch(pattern,string) only the whole string, return a match object. else return None
+*** re.split(pattern,string,maxsplit=0,flags=0) splits string by RE defined in pattern
+*** re.findall(pattern,string,flags=0) return all non-overlapping matches of pattern in a string in list
+*** re.purge() clear regular expression cache
+*** Match Objects
+**** Always have a boolean value of True if there is a match (since None is returned when no match is found)
+**** match.group([group1,...]) returns one or more subgroups of the match
+     - m = re.match(r"(\w+)\s(\w+)", "Isaac Newton, Physicist")
+       m.group(0) #"Isaac Newton"  The entire match
+       m.group(1) #"Isaac"  The first parenthesized subgroup
+       m.group(2) #"Newton" The second parenthesized subgroup
+     - m = re.match((?P<first_name>\w+) (?P<last_name>)\w+)','Guanduo Li')
+       m.group('first_name')  #or m.group(1)
+       m.group('last_name')   #or m.group(2)  notice m.group(0) returns the entire match not parenthesized match
+     - m.groups() returns all matches in tuple
+     - m.groupdict returns a dictionary containing all ~named~ subgroups of matched (MUST BE NAMED)
+** Find if a variable is declared
+*** Using globals()
+    - a = 3
+      'a' in globals()  #must ' '
+*** Using try/except
+    - try:
+         a
+      except: 
+         print "not defined"
+** Deep copy a list to avoid changing the mutable in functions
+   - L = L[:]
+   - M.extend(L)
+** Convert a string to a number (in hex or binary or dec)
+   - a = '0xf' #string
+     d = int(a,16) #to hex
+** Enable 3.X print function in 2.X
+   - from __future__ import print_function
+** exit python script
+   - import sys
+     sys.exit()
+** Retrive command-line arguments(argv)
+   - import sys
+     len(sys.argv) #this is a list. sys.argv[0] stores the file name of the current running script
+** extract the file name from glob
+   #+BEGIN_SRC python
+    os.path.basename(path)
+   #+END_SRC
+** get current dir (path)
+#+BEGIN_SRC
+   os.getcwd()
+#+END_SRC
+** Find whether a file is a link or dir, sort through modified time
+   #+BEGIN_SRC python
+   os.path.islink #find if it's a link
+   os.path.isdir #find if it's a dir
+   files = list(filter(lambda x:os.path.isdir(x),glob.glob(path+"*") #get all dir
+   dirs.sort(key=lambda x:os.path.getmtime(x)) #sort the list through modified time
+   #+END_SRC
+** File test
+   import os.path.exists
+** __name__ and "__main__"
+   - __main__ is the namespace at the top. If a module is run directly (top), __name__ will be set to "__main__", otherwise, it stores the module's name
+   - __name__ stores the current namespace
+   - __name__ == "__main__" if at top
+** It's convenient to have code at the bottom of a module for testing run only, not when the module is imported:
+   - if __name__ == '__main__':
+        #testing code for current module and these code won't be run when imported
+** dir() does more than iterating through __dict__ !!
+   - dir() knows how to grab all attributes of an object through __dict__. It also grabs all inherited attributes of this object! (all availables)
+   - __dict__ only contains "local" sets of attributes
+
+** Use str1.find(str2) to find if str2 is a substring of str1. Return the index of first match or -1 if no match
+** Flattern a list of list: smart way:
+   - a = [[1,2],[3,4],[5,5]]
+     a_flat = sum(a,[]) #use overload of + 
+   - The second argument of sum is the initial value used as the first operand before the first +
+     treat it as []+[1,2]+[3,4]+[5,5], which gives a flatterned list: [1,2,3,4,5,5]
+** Some Useful libraries
+*** argparse #used to parse arguments (augmented/accumulated) passed to this python script. Powerful
+**** Once all of the arguments are defined, you can parse the command line by passing a sequence of argument strings to parse_args().
+**** By default, the arguments are taken from sys.argv[1:], but you can also pass your own list. 
+**** The options are processed using the GNU/POSIX syntax, so option and argument values can be mixed in the sequence.
+**** To create an argparser
+     #+BEGIN_SRC python 
+     parser = argparse.ArgumentParser(description='Short sample app')
+     #+END_SRC
+**** Use add_argument method to specify arguement
+     | Action       | Name                                                                                                                       |
+     |--------------+----------------------------------------------------------------------------------------------------------------------------|
+     | store        | Save the value. Can optionally convert type if type is defined                                                             |
+     | store_const  | Save a value defined as part of the argument specification, rather than a value that comes from the arguments being parsed |
+     | store_true   | boolean True                                                                                                               |
+     | store_false  | boolean False                                                                                                              |
+     | append       | save the value to the list. Multiple values are saved if the argument is repeated                                          |
+     | append_const | Save a value defined in the argument specification to a list                                                               |
+     | version      | Prints version details about the program and then exits                                                                    |
+***** Example
+      #+BEGIN_SRC python
+      import argparse
+
+      parser = argparse.ArgumentParser()
+
+      parser.add_argument('-s', action='store', dest='simple_value',
+                          help='Store a simple value')
+
+      parser.add_argument('-c', action='store_const', dest='constant_value',
+                          const='value-to-store',
+                          help='Store a constant value')
+
+      parser.add_argument('-t', action='store_true', default=False,
+                          dest='boolean_switch',
+                          help='Set a switch to true')
+      parser.add_argument('-f', action='store_false', default=False,
+                          dest='boolean_switch',
+                          help='Set a switch to false')
+
+      parser.add_argument('-a', action='append', dest='collection',
+                          default=[],
+                          help='Add repeated values to a list',
+                          )
+
+      parser.add_argument('-A', action='append_const', dest='const_collection',
+                          const='value-1-to-append',
+                          default=[],
+                          help='Add different values to list')
+      parser.add_argument('-B', action='append_const', dest='const_collection',
+                          const='value-2-to-append',
+                          help='Add different values to list')
+
+      parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+
+      results = parser.parse_args()
+      print 'simple_value     =', results.simple_value
+      print 'constant_value   =', results.constant_value
+      print 'boolean_switch   =', results.boolean_switch
+      print 'collection       =', results.collection
+      print 'const_collection =', results.const_collection
+      #+END_SRC
+
+       $ python argparse_action.py -h
+
+       usage: argparse_action.py [-h] [-s SIMPLE_VALUE] [-c] [-t] [-f]
+                                 [-a COLLECTION] [-A] [-B] [--version]
+
+       optional arguments:
+         -h, --help       show this help message and exit
+         -s SIMPLE_VALUE  Store a simple value
+         -c               Store a constant value
+         -t               Set a switch to true
+         -f               Set a switch to false
+         -a COLLECTION    Add repeated values to a list
+         -A               Add different values to list
+         -B               Add different values to list
+         --version        show program's version number and exit
+
+       $ python argparse_action.py -s value
+
+       simple_value     = value
+       constant_value   = None
+       boolean_switch   = False
+       collection       = []
+       const_collection = []
+
+       $ python argparse_action.py -c
+
+       simple_value     = None
+       constant_value   = value-to-store
+       boolean_switch   = False
+       collection       = []
+       const_collection = []
+
+       $ python argparse_action.py -t
+
+       simple_value     = None
+       constant_value   = None
+       boolean_switch   = True
+       collection       = []
+       const_collection = []
+
+       $ python argparse_action.py -f
+
+       simple_value     = None
+       constant_value   = None
+       boolean_switch   = False
+       collection       = []
+       const_collection = []
+
+       $ python argparse_action.py -a one -a two -a three
+
+       simple_value     = None
+       constant_value   = None
+       boolean_switch   = False
+       collection       = ['one', 'two', 'three']
+       const_collection = []
+
+       $ python argparse_action.py -B -A
+
+       simple_value     = None
+       constant_value   = None
+       boolean_switch   = False
+       collection       = []
+       const_collection = ['value-2-to-append', 'value-1-to-append']
+
+       $ python argparse_action.py --version
+
+       argparse_action.py 1.0
+*** tabulate #used to print table in a fancy and read friendly way
+*** shutil #used to copy/move/chagne permission of a file
+*** marshal #used to serialize/de-serialize data to and from character strings, so they can be sent over a network. Use simple dump/load calls
+*** defaultdict #one more feature based on regular dict: if a key doesn't exsit, can implemnt a callback (i think)
+** bisect provide binary search of a list
+*** bisect.bisect(a,val,lo=0,hi=len(a)) returns i, where a[0:i] <= val. NOTE: this is greedy! C++ lower_bound is not greedy: i.e returns first element >= val
+*** If no match is found (a.k.a all elements are smaller than val, length of the list is returned)
+#+BEGIN_SRC python
+a = [1,2,3,4,5]
+i = bisect.bisect(a,3) #gives i == 3 -> a[0:3] = [1,2,3], but a[3] == 4
+#how to understand this? same as for loop. The first element is included, but last element is not included
+#+END_SRC
+** Use sorted with iterables and sorting function
+*** Prototype
+#+BEGIN_SRC python
+sorted(iterables,*,key=None,reverse=False)
+#+END_SRC
+*** key specifies a function of one argument that is used to extract a comparison key from each list element.
+*** Example
+#+BEGIN_SRC python
+def takeSecond(ele):
+   return ele[1]
+random = [(2,4),(1,5)]
+#sorted will pass each item (tuple in this case) to takeSecond function, then sort by key, then sort in descending order
+sorted list = sorted(random,takeSecond,reverse=True) 
+#+END_SRC
+*** Note this is different from C++ std::sort as C++ use a function that return bool by telling by using operator<.
+*** So in Python it's even simpler since user need to extract the key and pass as key argument 
+** Tell two variables pointing to the same object: using "is"
+*** if a is b:
+* Installing or Updating Python packages
+** conda install package_name
+** pip install package_name
+** conda update package_name
+** pip install --upgrade package_name
+* subprocess - spawn new processes, connect to their input/output/error pipes, and obtain return code
+** Convenient Function - subprocess.call(args,*,stdin=None,stdout=None,shell=False)
+*** Run the cmd, wait for it to finish, then return the returncode attribute
+#+BEGIN_SRC python
+subprocess.call(['ls','-l'])
+#+END_SRC
+** subprocess.PIPE - used as stdin,stdout or stderr argument to Popen
+** subprocess.STDOUT - special value that can  be used as the stderr argument tot Popen and indicates the stderror should go stdout
+** subprocess.Popen(args,bufsize=0,executable=None,stdin=None,stdout=None,stderr=None,preexec_fn=None,close_fds=False,shell=False,cwd=None,env=None)
+*** execute a child program in a new process. args should be a sequence of program arguments or else a single string
+*** when cwd is not None, hte child's current directory will be changed to it before exe the subprocess
+*** when env is not None, it must be a mapping that defines the environment variables for the new process
+** Popen.poll() - check if child process has terminated
+** Popen.wait() - wait for the child process to terminate
+** Popen.communicate(input=None) - interact with process: send data to stdin, read data from stdout and stderr, till EOT is reached. 
+*** also wait the process to finish. The input argument should be a string to send to the child process.
+*** return a tuple (stdoutdata,stderrdata)
+*** Notice: need to pass PIPE to stdin,stdout or stderr when opening the process if we need to communicate
+** Popen.send_signal(signal) - send a signal to the chile
+** Popen.terminate() - stop the child
+** Popen.kill() - kill the child
