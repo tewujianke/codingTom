@@ -32,6 +32,15 @@ Explanation: The input is: [5,1,4,null,null,3,6]. The root node's value
 #         self.left = None
 #         self.right = None
 
+
+"""
+BST: All nodes in the left sub tree are smaller than the current node.
+     All nodes in the right sub tree are bigger than the current node.
+
+Therefore, in-order traversal would always give increasing order.
+Step1: in-order traverse the tree.
+step2: go through the list and if the increasing order is not met, return false
+"""
 class Solution(object):
     def isValidBST(self, root):
         """
@@ -40,14 +49,16 @@ class Solution(object):
         """
         def inOrderTraversal(all_nodes,node):
             if not node: return
-            if node.left: inOrderTraversal(node.left)
+            if node.left: inOrderTraversal(all_nodes,node.left)
             all_nodes.append(node)
-            if node.right: inOrderTraversal(node.right)
+            if node.right: inOrderTraversal(all_nodes,node.right)
 
-        if not root: return True
-        all_nodes = []
-        inOrderTraversal(all_nodes,root)
-        for i,v in enumerate(all_nodes):
+        if not root: return True #empty tree
+        all_nodes = [] #list to store all the nodes in order
+        inOrderTraversal(all_nodes,root) #recursively traverse the tree in-order
+        #for i in all_nodes:
+            #print(i.val)
+        for i,v in enumerate(all_nodes): #go through the list, find any non-increasing neighbors
             if i == 0: continue
-            if v.val >= all_nodes[i-1].val: return False
+            if v.val <= all_nodes[i-1].val: return False 
         return True
