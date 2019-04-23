@@ -32,6 +32,14 @@ p and q are different and both values will exist in the binary tree.
 #         self.left = None
 #         self.right = None
 
+"""
+Use recursion to solve.
+Traverse the tree, if meeing p or q, return the node directly. Otherwise keep traversing the tree.
+Several cases for current node:
+1. both left and right return true-:  found the common ancestor
+2. only one side return true: either a common ancestor is already found below, or found only one. Keep returning  the node in both cases
+3. both left and right return false: not found in this subtree. keep returning false
+"""
 class Solution(object):
     def lowestCommonAncestor(self, root, p, q):
         """
@@ -40,4 +48,10 @@ class Solution(object):
         :type q: TreeNode
         :rtype: TreeNode
         """
+        
+        if any((root==None, root==p, root==q)): return root#empty tree return None. Or return the node itself if found one
+        leftChild = self.lowestCommonAncestor(root.left,p,q)#keep going left
+        rightChild= self.lowestCommonAncestor(root.right,p,q)#keep going right
+        if not leftChild or not rightChild: return leftChild if leftChild else rightChild #only one side is true. See case 2 in comment header
+        return root #when both sides return true (found ancestor), or keep return None
         
