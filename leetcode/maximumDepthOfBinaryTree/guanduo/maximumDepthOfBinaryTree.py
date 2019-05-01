@@ -36,7 +36,7 @@ class Solution(object):
         :rtype: int
         """
         if not root: return 0 #isn't this obvious
-        return max(self.maxDepth(root.left),self.maxDepth(root.right)) +1 #what the heck
+        return max(self.maxDepth(root.left),self.maxDepth(root.right)) +1 #fucking stupid
     
         
         
