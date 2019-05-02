@@ -17,6 +17,10 @@ as "[1,2,3,null,null,4,5]"
 
 """
 # Definition for a binary tree node.
+
+"""
+Using DFS to serialize and de-serialize. 
+"""
 class TreeNode(object):
     def __init__(self, x):
         self.val = x
@@ -33,15 +37,15 @@ class Codec:
         """
         def serializeDFS(node,result):
             if not node:
-                result.append('None')
+                result.append('None')#convert to string for None
                 return
-            result.append(str(node.val))
-            serializeDFS(node.left,result)
+            result.append(str(node.val)) #convert to string for valid node. Only push the value to it
+            serializeDFS(node.left,result) #this is post order. in order would also work
             serializeDFS(node.right,result)
             
         serializedArray = list()
         serializeDFS(root,serializedArray)
-        return ','.join(serializedArray)
+        return ','.join(serializedArray)#join the array into a string "1,2,3,None,None,5,6"
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
@@ -49,15 +53,20 @@ class Codec:
         :type data: str
         :rtype: TreeNode
         """
-        def buildTreeDFS(node,nodeArray):
-            if not nodeArray.size(): return
-            newNode = TreeNode(int(nodeArray.pop()))
+        def buildTreeDFS(nodeArray):
+            if not len(nodeArray): return None #empty list. no more node
+            newNode = nodeArray.pop() #pop from back (since reserved already)
+            if newNode=='None': return None #got a none. return none
+            newNode = TreeNode(int(newNode)) #construct a new node with value
+            newNode.left = buildTreeDFS(nodeArray)  #DPS
+            newNode.right= buildTreeDFS(nodeArray)
+            return newNode #don't forget to return the node in the end
             
-        nodeArray = data.split(',')
-        nodeArray.reverse()
-        if not nodeArray.size() or not nodeArray[0]: return None
-        root = None
-        buildTreeDFS(root,nodeArray)
+        nodeArray = data.split(',') #split the string into list of nodes and Nones
+        nodeArray.reverse() #reverse the string since popping from front is time consuming. Could have used a deque or queue in this case
+        if not len(nodeArray) or not nodeArray[-1]: return None
+
+        return buildTreeDFS(nodeArray) #recursively build the tree
         
 
 # Your Codec object will be instantiated and called as such:
@@ -79,3 +88,4 @@ if __name__ == '__main__':
 
     codec = Codec()
     print(codec.serialize(root))
+    print(codec.serialize(codec.deserialize(codec.serialize(root))))
