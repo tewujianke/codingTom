@@ -1,0 +1,186 @@
+* SQL is the language we use to talk to database management systems. MySQL is a the database management system. There are others (Oracle, SQLite..)y
+* Install mySQL on mac potiential problems
+  MAC INSTALLATION INSTRUCTIONS - CODE FROM THE VIDEO
+  ONLY RECOMMENDED FOR EXPERIENCED DEVELOPERS. 
+  SERIOUSLY, JUST USE CLOUD9 AND THEN RETURN TO THIS VIDEO AFTER YOU GRADUATE!
+  
+  Once you've downloaded and started up the MySQL server...
+  
+  Add the following line to your .bash_profile or .zshrc file
+  
+  export PATH=${PATH}:/usr/local/mysql/bin/ 
+  
+  Then run:
+  
+  Mysql -u root -p 
+  
+  And enter the password you received when you initially installed.
+  
+  Finally, create a new password for the root user by running:
+  
+  ALTER USER 'root'@'localhost' IDENTIFIED BY 'yournewpassword' 
+  
+  
+  
+  Note: Some students have mentioned that they get errors instead of warnings when using MySQL for Mac (and possibly Windows/Linux). If you run into this error then you can try the following solution to resolve the issue:
+  
+  Take your setup out of strict mode with the following command:
+  SET @@global.sql_mode= ''; 
+
+* Creating Databases and Tables
+** Create Databases
+*** list all databases
+#+BEGIN_SRC sql
+show databases;
+#+END_SRC
+*** create db
+#+BEGIN_SRC sql
+create database <db name>;
+#+END_SRC
+*** delete a db
+#+BEGIN_SRC sql
+drop database <name>;
+#+END_SRC
+*** switch to a DB we want to use (when we have multiple DBs)
+#+BEGIN_SRC sql
+USE <database name>;
+#+END_SRC
+*** tells you which DB you are working with now
+#+BEGIN_SRC sql
+select database();
+#+END_SRC
+** Tables (a database is a bunch of tables)
+*** Table example
+| Name   | Breed        | Age |
+|--------+--------------+-----|
+| Blue   | ScottishFold |   1 |
+| Rocket | Persian      |   3 |
+| Monty  | Tabby        |  10 |
+| Sam    | Munchkin     |   5 | 
+*** Data Types (Columns have to be the same types (numbers, texts..)  
+**** Numeric Types
+***** int - max value is 4294967295
+***** smallint
+***** tinyint
+***** mediumint
+***** bigint
+***** decimal
+***** numeric
+***** float
+***** double
+***** bit
+**** String Types
+***** char
+***** varchar - variable-length string (char has to be fixed length!)
+***** binary
+***** varbinary
+***** blob
+***** tinyblob
+***** mediumblob
+***** longblob
+***** text
+***** tynytext
+***** mediumtext
+***** longtext
+***** enum
+**** DateTypes
+***** Date
+***** datetime
+***** timestamp
+***** time
+***** year
+*** create table
+#+BEGIN_SRC sql
+CREATE TABLE tablename
+(
+    column_name data_type,
+    column_name data_type
+);
+
+CREATE TABLE cats
+(
+   name VARCHAR(100),
+   age  INT
+);
+#+END_SRC
+*** show tables in current database
+#+BEGIN_SRC sql
+SHOW TABLES;
+#+END_SRC
+*** show cols from a table and their data types
+#+BEGIN_SRC sql
+SHOW COLUMNS FROM <table>  or
+DESC <tablename>   #describe
+#+END_SRC
+*** delete table
+#+BEGIN_SRC sql
+drop table <tablename>
+#+END_SRC
+*** NULL - allows you to put empty data to that column (shown as YES in NULL column when you desc table)
+**** This also allows you to not use all colume when add value to a table
+**** Can be turned off. It won't allow you to skip particular/all columns when add a value to this table (by giving a warning)
+#+BEGIN_SRC sql
+create table cats2 (
+   name VARCHAR(100) NOT NULL,
+   age INT NOT NULL
+);
+#+END_SRC
+*** Default - default will be used when not specifying that column value during insert
+**** specify defualt for that colune when not specifying during adding values
+#+BEGIN_SRC sql
+create table cat3 (
+   name VARCHAR(20) DEFAULT 'no name',
+   age int DEFAULT 99
+);
+#+END_SRC
+*** having both NULL and Default is not really redundent. It won't allow you to explicitly adding NULL to that column, but you could leave empty
+*** Key (primary key)
+**** Set a Primary Key (uninque identifier on a row)
+**** assign a column to serve as the primary key (that column must be unique!)
+#+BEGIN_SRC sql
+create table unique_cats (
+   cat_id INT NOT NULL,
+   name VARCHAR(100) DEFAULT '',
+   age INT,
+   PRIMARY KEY(cat_id));
+#+END_SRC
+| Field  | Type        | Null | Key | Default | Extra |
+|--------+-------------+------+-----+---------+-------|
+| cat_id | int(11)     | NO   | PRI | NULL    |       |
+| name   | varchar(100 | YES  |     |         |       |
+| age    | int(11)     | YES  |     | NULL    |       | 
+  
+**** Use AUTO_INCREMENT extra to let it automatically increment the primary key for you when it is not specifying during inserting
+#+BEGIN_SRC sql
+create table cat2 (
+   cat_id INT NOT NULL AUTO_INCREMENT,
+   name VARCHAR(100),
+   age int,
+   PRIMARY KEY(cat_id)
+
+);
+| Field  | Type        | Null | Key | Default | Extra          |
+|--------+-------------+------+-----+---------+----------------|
+| cat_id | int(11)     | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(100 | YES  |     |         |                |
+| age    | int(11)     | YES  |     | NULL    |                |
+#+END_SRC
+** Inserting Data 
+*** Insert
+#+BEGIN_SRC sql
+insert into <tablename>(name,age) #notice no semicolon
+values ("Jetson",7);
+
+
+insert into <tablename>(age,name) values (12,"Victoria");
+#+END_SRC
+*** Multiple Insert
+#+BEGIN_SRC sql
+insert into cats(name,age)
+values ('charlie',10), ('tom',8),('Peanut',2)
+#+END_SRC
+* Warnings
+** show warnings must be used right after Warnings.
+#+BEGIN_SRC sql
+show warnings
+#+END_SRC
