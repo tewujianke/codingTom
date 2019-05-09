@@ -1,4 +1,5 @@
-* SQL is the language we use to talk to database management systems. MySQL is a the database management system. There are others (Oracle, SQLite..)y
+* SQL is the language we use to talk to database management systems.
+** MySQL is a the database management system. There are others (Oracle, SQLite..)
 * Install mySQL on mac potiential problems
   MAC INSTALLATION INSTRUCTIONS - CODE FROM THE VIDEO
   ONLY RECOMMENDED FOR EXPERIENCED DEVELOPERS. 
@@ -59,36 +60,42 @@ select database();
 | Sam    | Munchkin     |   5 | 
 *** Data Types (Columns have to be the same types (numbers, texts..)  
 **** Numeric Types
-***** int - max value is 4294967295
-***** smallint
-***** tinyint
-***** mediumint
-***** bigint
-***** decimal
-***** numeric
-***** float
-***** double
-***** bit
+| Type      | Notes                   |
+|-----------+-------------------------|
+| int       | max value is 4294967295 |
+| smallint  |                         |
+| tinyint   |                         |
+| mediumint |                         |
+| bigint    |                         |
+| decimal   |                         |
+| numeric   |                         |
+| float     |                         |
+| double    |                         |
+| bit       |                         |
 **** String Types
-***** char
-***** varchar - variable-length string (char has to be fixed length!)
-***** binary
-***** varbinary
-***** blob
-***** tinyblob
-***** mediumblob
-***** longblob
-***** text
-***** tynytext
-***** mediumtext
-***** longtext
-***** enum
+| Type       | Notes                                                 |
+|------------+-------------------------------------------------------|
+| char       |                                                       |
+| varchar    | variable-length string (char has to be fixed length!) |
+| binary     |                                                       |
+| varbinary  |                                                       |
+| blob       |                                                       |
+| tinyblob   |                                                       |
+| mediumblob |                                                       |
+| longblob   |                                                       |
+| text       |                                                       |
+| tinytext   |                                                       |
+| mediumtext |                                                       |
+| longtext   |                                                       |
+| enum       |                                                       |
 **** DateTypes
-***** Date
-***** datetime
-***** timestamp
-***** time
-***** year
+| Type      | Notes |
+|-----------+-------|
+| Date      |       |
+| datetime  |       |
+| timestamp |       |
+| time      |       |
+| year      |       |
 *** create table
 #+BEGIN_SRC sql
 CREATE TABLE tablename
