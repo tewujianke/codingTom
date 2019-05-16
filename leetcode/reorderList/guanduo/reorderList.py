@@ -20,16 +20,16 @@ Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
 
 
 """
-I considered using dict to solve, but it doesn't utilize linked list property. So quit it
+I considered using dict to solve, but it doesn't utilize the linked list property. So quit it
 
 Try to solve directly using linked list property.
 The idea is to split the linked list, the later half needs be be reversed, then we assign a pointer pointing to the reversed latter half.
-Then we could combine two linked list into one in turn from the two linked list
+Then we could combine two linked list into one in turn 
 """
 class Solution(object):
     def reorderList(self, head):
         """
-        get the length of a linked list as we have to know how long the linked list is so get the second know (last one)
+        get the length of a linked list as we have to know how long the linked list is to get the second node (last one)
         """
         def getLength_ll(head):
             leng = 0
