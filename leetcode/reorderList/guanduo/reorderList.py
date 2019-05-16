@@ -20,15 +20,16 @@ Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
 
 
 """
-I considered using dict to solve, but it doesn't utilize linked list property and it has very low efficiency
+I considered using dict to solve, but it doesn't utilize linked list property. So quit it
 
-Try to solve directly using linked list property. The idea is to split the linked list, the later half needs be be reversed.
+Try to solve directly using linked list property.
+The idea is to split the linked list, the later half needs be be reversed, then we assign a pointer pointing to the reversed latter half.
 Then we could combine two linked list into one in turn from the two linked list
 """
 class Solution(object):
     def reorderList(self, head):
         """
-        get the length of a linked list
+        get the length of a linked list as we have to know how long the linked list is so get the second know (last one)
         """
         def getLength_ll(head):
             leng = 0
@@ -48,25 +49,30 @@ class Solution(object):
             return reverse_LL(tmp,head)
 
         """
-        return the head of nth node
+        return the head of nth node,used to get the starting node of the latter half
         """
         def getNthNode(head,n):
             if not n: return head
             return getNthNode(head.next,n-1)
-            
-        if not head: return head
-        length = getLength_ll(head)+1
-        lower_index //= 2
-        lower_head = getNthNode(head,lower_index)
-        Nhead = reverse_LL(lower_head)
-        """
-        1->2->3->4->5
-        
-        5->4->none
 
-        reverseH = 3
-        reverseT = None
-        1->5->2->4->3
-        """
-        tmp0 = 
-        
+        if not head: return head                      #empty list
+        length = getLength_ll(head)+1                 #calculate the total length
+        lower_index = length//2                       #plus 1 divided by 2 gives the starting index of the latter half
+        lower_head = getNthNode(head,lower_index)     #get a pointer to the starting node of latter half
+
+        Nhead = reverse_LL(lower_head)                #reverse the latter linked list and return the new head (tail of original list)
+
+        cur = head                                    #save the head to return at last
+        tail = 0                                      #used as a toggle to know which node to pick in turn from the two lists
+        tmp = cur.next                                #tmp variable stores the next node of the first list (latter half no need to store)
+
+        while cur:
+            tail ^= 1                                 #change toggle to pick a node in turn 
+            if tail:                                  #pick from latter list
+                cur.next = Nhead
+                Nhead = None if not Nhead else Nhead.next #special case for empty latter list since the latter list always has less nodes than former list
+            else:
+                cur.next = tmp                        #grab the prveviously saved node
+                tmp = tmp.next
+            cur = cur.next
+        return head
