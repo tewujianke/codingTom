@@ -19,25 +19,25 @@ Output: "10101"
 using namespace std;
 
 /*
-Use c++ to solve as python is so damn easy
+Use c++ to solve
  */
 class Solution {
 public:
     string addBinary(string a, string b) {
-      int i = a.size()-1;
+      int i = a.size()-1;  //reverse order. check LSB first
       int j = b.size()-1;
       string newString("");
 
       int carry = 0;
-      while (i>=0 || j>=0 || carry) {
+      while (i>=0 || j>=0 || carry) {  //while we are not finished looking at all bits (including the carry bits)
 	int cur = carry;
 	carry=0;
 	if(i>=0) cur+=a[i--]-'0';
 	if(j>=0) cur+=b[j--]-'0';
-	if(cur==2){carry=1;cur=0;}
+	if(cur==2){carry=1;cur=0;}  //we could get 2 or 3. Carry will always be 1 if cur is bigger than 1.
 	if(cur==3){carry=1;cur=1;}
 	char tmp = char('0'+cur);
-	newString = newString.insert(0,&tmp);
+	newString = newString.insert(0,&tmp); //add to new sring
       }
       return newString;
 
