@@ -18,7 +18,7 @@ Output: 5
 """
 
 """
-Use linked list to solve.  construct a linked list like 24->'+'->19->'-'->100->'*'->4->'/'
+Use linked list to solve. since editting LL requires constant time.  construct a linked list like 24->'+'->19->'-'->100->'*'->4->'/'
 Two passes:
  1. first pass we ignore + and -. Iteratte through the LL, if the next pointer is "*" or "/", del the node, create a new node with result.
  2. second pass no need to edit the linked list because we are only left with "+","-". Just iterate from head to tail and calculate the sum.
