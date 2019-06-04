@@ -24,15 +24,14 @@ class Node(object):
 
 """
 Use recursive way to solve.
-Traverse the entire tree. For each node, I assume the next connection was established already when I was 
-looking at its parent node.
+Traverse the entire tree. For each node, I assume the next connection has fully been established.
 
-Need to traverse the right tree first, then left tree, as the tree could not be complete and a node's next could skip 
-nodes. Traversing the right tree first ensures the complete next nodes connection on the previous level.
+Need to traverse the right tree first, then left tree, as the tree may not be complete and a node's next pointer could skip 
+some nodes on the same level. Traversing the right tree first ensures the complete next nodes connection on the previous level.
 
-Then we check the node's children. If both children exist, assign left child's next to the right child
-There is a case when there is only one child exists. In this case we need to find the right most node,
-the assign the rightmost node's next through its parent's "next"'s leftmost child.
+Then we check the node's children. If both children exist, I assign left child's next ptr to the right child
+There is a case when there is only one child. In this case we need to find the rightmost node,
+then I assign the rightmost node's next through its parent's "next"'s leftmost child.
 """
 class Solution(object):
     def connect(self, root):
